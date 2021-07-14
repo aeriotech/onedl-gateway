@@ -2,21 +2,30 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Post,
   Put,
   UseGuards,
 } from '@nestjs/common'
-import { AuthGuard } from '@nestjs/passport'
-import { User } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
-import { UpdateUserDto } from './dto/user-update.dto'
+import { PublicUserService } from './public/public-user.service'
 import { UserId } from './user.decorator'
 import { UserService } from './user.service'
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly publicUserService: PublicUserService,
+  ) {}
+
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  async getUser(@UserId() id: number) {
+    return this.publicUserService.findFirst({ id })
+  }
 
   @Post()
   async register(
@@ -33,7 +42,10 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Put()
-  async update(@UserId() id: number, @Body() updateUserDto: UpdateUserDto) {
+  async update(
+    @UserId() id: number,
+    @Body() updateUserDto: Prisma.UserUpdateInput,
+  ) {
     return this.userService.update({ id }, updateUserDto)
   }
 

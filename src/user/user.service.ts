@@ -7,7 +7,6 @@ import { PrismaService } from '../prisma/prisma.service'
 import { Prisma, User } from '@prisma/client'
 import { RegisterDto } from './dto/register.dto'
 import * as bcrypt from 'bcrypt'
-import { UpdateUserDto } from './dto/user-update.dto'
 
 @Injectable()
 export class UserService {
@@ -28,7 +27,7 @@ export class UserService {
     })
   }
 
-  private async find(user: Prisma.UserWhereUniqueInput): Promise<User | null> {
+  async find(user: Prisma.UserWhereUniqueInput): Promise<User | null> {
     return this.prismaService.user.findUnique({
       where: user,
     })
@@ -37,10 +36,13 @@ export class UserService {
   async register(registerDto: RegisterDto) {
     const salt = await bcrypt.genSalt()
     const hashedPassword = await bcrypt.hash(registerDto.password, salt)
-    const { id, password, ...result } = await this.create({
+    const { id, password, profileId, ...result } = await this.create({
       username: registerDto.username,
       email: registerDto.email,
       password: hashedPassword,
+      profile: {
+        create: {},
+      },
     })
 
     return result
@@ -53,7 +55,7 @@ export class UserService {
     }
 
     if (await this.find({ email })) {
-      throw new ConflictException('User with this email exsists')
+      throw new ConflictException('User with this email exists')
     }
 
     return this.prismaService.user.create({
@@ -63,18 +65,22 @@ export class UserService {
 
   async update(
     user: Prisma.UserWhereUniqueInput,
-    updateUserDto: UpdateUserDto,
+    data: Prisma.UserUpdateInput,
   ) {
     const salt = await bcrypt.genSalt()
     let hashedPassword
-    if (updateUserDto.password) {
-      hashedPassword = await bcrypt.hash(updateUserDto.password, salt)
+    if (data.password) {
+      hashedPassword = await bcrypt.hash(data.password.toString(), salt)
     }
-    const { id, password, ...result } = await this.prismaService.user.update({
+    const result = await this.prismaService.user.update({
       where: user,
       data: {
-        email: updateUserDto.email,
+        ...data,
         password: hashedPassword,
+      },
+      select: {
+        username: true,
+        email: true,
       },
     })
 
@@ -85,6 +91,10 @@ export class UserService {
     if (await this.find(data)) {
       return this.prismaService.user.delete({
         where: data,
+        select: {
+          username: true,
+          email: true,
+        },
       })
     }
     throw new NotFoundException('This user does not exist')
