@@ -4,7 +4,11 @@ import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { AuthModule } from './auth/auth.module'
 import { UserModule } from './user/user.module'
-import { ProfileModule } from './profile/profile.module';
+import { ProfileModule } from './profile/profile.module'
+import { DiscountModule } from './discount/discount.module'
+import { ShopModule } from './shop/shop.module'
+import { CouponModule } from './coupon/coupon.module'
+import { FilesModule } from './files/files.module'
 
 @Module({
   imports: [
@@ -14,6 +18,10 @@ import { ProfileModule } from './profile/profile.module';
       isGlobal: true,
     }),
     ProfileModule,
+    DiscountModule,
+    ShopModule,
+    CouponModule,
+    FilesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

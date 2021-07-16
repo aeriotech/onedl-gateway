@@ -24,6 +24,8 @@ model Profile {
   createdAt   DateTime         @default(now())
   updatedAt   DateTime?        @updatedAt
   user        User?
+  firstName   String
+  lastName    String
   bio         String           @default("")
   socialLinks UserSocialLink[]
 }
@@ -78,5 +80,5 @@ model PublicFile {
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
   url       String
-  key       String
+  key       String    @unique
 }

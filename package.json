@@ -28,6 +28,8 @@
     "@nestjs/passport": "^7.1.6",
     "@nestjs/platform-express": "^7.6.13",
     "@prisma/client": "^2.26.0",
+    "@types/aws-sdk": "^2.7.0",
+    "aws-sdk": "^2.947.0",
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
@@ -37,7 +39,8 @@
     "passport-local": "^1.0.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^6.6.6"
+    "rxjs": "^6.6.6",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.5.6",

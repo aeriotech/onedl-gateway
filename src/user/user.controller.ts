@@ -8,50 +8,36 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common'
-import { Prisma } from '@prisma/client'
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
-import { PublicUserService } from './public/public-user.service'
+import { RegisterDto } from './dto/register.dto'
+import { UpdateUserDto } from './dto/update-user.dto'
 import { UserId } from './user.decorator'
 import { UserService } from './user.service'
 
 @Controller('user')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly publicUserService: PublicUserService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @UseGuards(JwtAuthGuard)
   @Get()
   async getUser(@UserId() id: number) {
-    return this.publicUserService.findFirst({ id })
+    return this.userService.getPubicUser(id)
   }
 
   @Post()
-  async register(
-    @Body('username') username: string,
-    @Body('email') email: string,
-    @Body('password') password: string,
-  ) {
-    return this.userService.register({
-      username,
-      email,
-      password,
-    })
+  async register(@Body() body: RegisterDto) {
+    return this.userService.createPublicUser(body)
   }
 
   @UseGuards(JwtAuthGuard)
   @Put()
-  async update(
-    @UserId() id: number,
-    @Body() updateUserDto: Prisma.UserUpdateInput,
-  ) {
-    return this.userService.update({ id }, updateUserDto)
+  async update(@UserId() id: number, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.updatePublicUser(id, updateUserDto)
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete()
   async delete(@UserId() id: number) {
-    return this.userService.delete({ id })
+    return this.userService.deleteUser(id)
   }
 }
