@@ -8,8 +8,9 @@ import {
 import { PrismaService } from '../prisma/prisma.service'
 import { Prisma, User } from '@prisma/client'
 import { RegisterDto } from './dto/register.dto'
-import { UpdateUserDto } from './dto/update-user.dto'
+import { UpdatePublicUserDto } from './dto/update-public-user.dto'
 import * as bcrypt from 'bcrypt'
+import { UpdateUserDto } from './dto/update-user.dto'
 
 @Injectable()
 export class UserService {
@@ -34,7 +35,7 @@ export class UserService {
     })
   }
 
-  async updatePublicUser(id: number, updateUserDto: UpdateUserDto) {
+  async updatePublicUser(id: number, updateUserDto: UpdatePublicUserDto) {
     this.logger.log(`[Public] Updating user ${updateUserDto.username}`)
     let hashedPassword
     if (updateUserDto.password) {
@@ -126,15 +127,19 @@ export class UserService {
   ) {
     this.logger.log(`Updating user ${updateUserDto.username}`)
     await this.checkUser(user)
-    const salt = await bcrypt.genSalt()
-    const hashedPassword = await bcrypt.hash(updateUserDto.password, salt)
-    return this.prisma.user.update({
+    let hashedPassword
+    if (updateUserDto.password) {
+      const salt = await bcrypt.genSalt()
+      hashedPassword = await bcrypt.hash(updateUserDto.password, salt)
+    }
+    const { password, ...result } = await this.prisma.user.update({
       where: user,
       data: {
         ...updateUserDto,
         password: hashedPassword,
       },
     })
+    return result
   }
 
   async deleteUser(id: number) {

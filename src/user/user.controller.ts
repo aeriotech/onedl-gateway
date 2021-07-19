@@ -12,6 +12,7 @@ import { Role } from '@prisma/client'
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 import { RoleGuard } from 'src/role/role.guard'
 import { RegisterDto } from './dto/register.dto'
+import { UpdatePublicUserDto } from './dto/update-public-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { UserId } from './user.decorator'
 import { UserService } from './user.service'
@@ -76,7 +77,10 @@ export class UserController {
    */
   @UseGuards(JwtAuthGuard)
   @Put()
-  async update(@UserId() id: number, @Body() updateUserDto: UpdateUserDto) {
+  async update(
+    @UserId() id: number,
+    @Body() updateUserDto: UpdatePublicUserDto,
+  ) {
     return this.userService.updatePublicUser(id, updateUserDto)
   }
 

@@ -1,3 +1,4 @@
+import { Shop } from '@prisma/client'
 import { IsInt, IsUUID } from 'class-validator'
 
 export class CreateDiscountDto {
@@ -9,4 +10,6 @@ export class CreateDiscountDto {
 
   @IsInt()
   parts?: number
+
+  shop: Shop
 }
