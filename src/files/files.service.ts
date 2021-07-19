@@ -1,7 +1,7 @@
 import { file } from '@babel/types'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { S3 } from 'aws-sdk'
+import { Endpoint, S3 } from 'aws-sdk'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { v4 as uuid } from 'uuid'
 
@@ -13,12 +13,16 @@ export class FilesService {
   ) {}
 
   async uploadPublicFile(dataBuffer: Buffer, filename: string) {
-    const s3 = new S3()
+    const s3 = new S3({
+      endpoint: new Endpoint(this.configService.get('S3_ENDPOINT')),
+    })
+
     const uploadResult = await s3
       .upload({
         Bucket: this.configService.get('S3_BUCKET'),
         Body: dataBuffer,
         Key: `${uuid()}-${filename}`,
+        ACL: 'public-read',
       })
       .promise()
 
@@ -34,7 +38,9 @@ export class FilesService {
     const file = await this.prisma.publicFile.findUnique({
       where: { id: fileId },
     })
-    const s3 = new S3()
+    const s3 = new S3({
+      endpoint: new Endpoint(this.configService.get('S3_ENDPOINT')),
+    })
     await s3
       .deleteObject({
         Bucket: this.configService.get('S3_BUCKET'),

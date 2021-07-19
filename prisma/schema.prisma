@@ -9,76 +9,100 @@ generator client {
 
 model User {
   id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt
+  role      Role      @default(USER)
   username  String    @unique
   email     String    @unique
   password  String
   profile   Profile?  @relation(fields: [profileId], references: [id])
   profileId Int?
+  score     Int       @default(0)
   coupons   Coupon[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 model Profile {
-  id          Int              @id @default(autoincrement())
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime?        @updatedAt
-  user        User?
-  firstName   String
-  lastName    String
-  bio         String           @default("")
-  socialLinks UserSocialLink[]
+  id               Int              @id @default(autoincrement())
+  user             User?
+  firstName        String
+  lastName         String
+  bio              String           @default("")
+  profilePicture   PublicFile?      @relation(fields: [profilePictureId], references: [id])
+  profilePictureId Int?
+  socialLinks      UserSocialLink[]
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime?        @updatedAt
 }
 
 model UserSocialLink {
   id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt
   profile   Profile?  @relation(fields: [profileId], references: [id])
   profileId Int?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
 }
 
 model Shop {
-  id        Int        @id @default(autoincrement())
-  createdAt DateTime   @default(now())
-  updatedAt DateTime?  @updatedAt
-  name      String     @unique
+  id        Int         @id @default(autoincrement())
+  uuid      String      @unique
+  name      String
+  logo      PublicFile? @relation(fields: [logoId], references: [id])
+  logoId    Int?
+  public    Boolean     @default(false)
   discounts Discount[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime?   @updatedAt
 }
 
 model Category {
   id        Int        @id @default(autoincrement())
-  createdAt DateTime   @default(now())
-  updatedAt DateTime?  @updatedAt
+  uuid      String     @unique
   name      String
   discounts Discount[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime?  @updatedAt
 }
 
 model Discount {
-  id         Int       @id @default(autoincrement())
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime? @updatedAt
-  coupons    Coupon[]
-  category   Category  @relation(fields: [categoryId], references: [id])
-  categoryId Int
-  shop       Shop      @relation(fields: [shopId], references: [id])
-  shopId     Int
+  id           Int       @id @default(autoincrement())
+  uuid         String    @unique
+  coupons      Coupon[]
+  max          Int?
+  parts        Int       @default(0)
+  validFrom    DateTime?
+  validTo      DateTime?
+  validTime    Int?
+  category     Category? @relation(fields: [categoryUuid], references: [uuid])
+  categoryUuid String?
+  shop         Shop      @relation(fields: [shopId], references: [id])
+  shopId       Int
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime? @updatedAt
 }
 
 model Coupon {
-  id         Int       @id @default(autoincrement())
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime? @updatedAt
-  discount   Discount  @relation(fields: [discountId], references: [id])
-  discountId Int
-  user       User?     @relation(fields: [userId], references: [id])
-  userId     Int?
+  id           Int       @id @default(autoincrement())
+  public       Boolean   @default(false)
+  validTo      DateTime?
+  discount     Discount  @relation(fields: [discountUuid], references: [uuid])
+  discountUuid String
+  user         User?     @relation(fields: [userId], references: [id])
+  userId       Int?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime? @updatedAt
 }
 
 model PublicFile {
   id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt
   url       String
   key       String    @unique
+  Profile   Profile[]
+  Shop      Shop[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
 }
