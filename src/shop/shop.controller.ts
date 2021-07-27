@@ -13,7 +13,6 @@ import {
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { Role } from '@prisma/client'
-import { timeStamp } from 'console'
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 import { RoleGuard } from 'src/role/role.guard'
 import { CreateShopDto } from './dtos/create-shop.dto'

@@ -3,10 +3,8 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
   Post,
   Put,
-  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -17,8 +15,6 @@ import { UserId } from 'src/user/user.decorator'
 import { ProfileUpdateDto } from './dto/profile-update.dto'
 import { ProfileService } from './profile.service'
 import { Express } from 'express'
-import { RoleGuard } from 'src/role/role.guard'
-import { Prisma, Role } from '@prisma/client'
 
 @Controller('profile')
 export class ProfileController {

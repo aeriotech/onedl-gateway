@@ -16,8 +16,6 @@ import { UpdateUserDto } from './dto/update-user.dto'
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  private readonly logger = new Logger(UserService.name)
-
   private public: Prisma.UserSelect = {
     username: true,
     email: true,
@@ -27,7 +25,6 @@ export class UserService {
   }
 
   async getPubicUser(user: Prisma.UserWhereUniqueInput) {
-    this.logger.log(`[Public] Get user ${JSON.stringify(user)}`)
     await this.checkUser(user)
     return this.prisma.user.findUnique({
       where: user,
@@ -36,7 +33,6 @@ export class UserService {
   }
 
   async updatePublicUser(id: number, updateUserDto: UpdatePublicUserDto) {
-    this.logger.log(`[Public] Updating user ${updateUserDto.username}`)
     let hashedPassword
     if (updateUserDto.password) {
       hashedPassword = await bcrypt.hash(
@@ -60,7 +56,6 @@ export class UserService {
   }
 
   async createPublicUser(registerDto: RegisterDto) {
-    this.logger.log(`[Public] Creating new user ${registerDto.username}`)
     const salt = await bcrypt.genSalt()
     const hashedPassword = await bcrypt.hash(registerDto.password, salt)
 
@@ -100,19 +95,21 @@ export class UserService {
   }
 
   async getUser(user: Prisma.UserWhereUniqueInput) {
-    this.logger.log(`Get user ${JSON.stringify(user)}`)
     await this.checkUser(user)
     const { password, ...result } = await this.prisma.user.findUnique({
       where: user,
       include: {
-        profile: true,
+        profile: {
+          include: {
+            profilePicture: true,
+          },
+        },
       },
     })
     return result
   }
 
   async getUsers() {
-    this.logger.log('Get users')
     return await (
       await this.prisma.user.findMany()
     ).map((user) => {
@@ -125,7 +122,6 @@ export class UserService {
     user: Prisma.UserWhereUniqueInput,
     updateUserDto: UpdateUserDto,
   ) {
-    this.logger.log(`Updating user ${updateUserDto.username}`)
     await this.checkUser(user)
     let hashedPassword
     if (updateUserDto.password) {
@@ -143,7 +139,6 @@ export class UserService {
   }
 
   async deleteUser(id: number) {
-    this.logger.log(`Deleting user with id ${id}`)
     await this.checkUser({ id })
     return this.prisma.user.delete({
       where: { id },
@@ -162,7 +157,6 @@ export class UserService {
       switch (error.code) {
         case 'P2002':
           const conflictingField = error.meta['target'][0]
-          this.logger.warn(`User with this ${conflictingField} exists`)
           throw new ConflictException(
             `User with this ${conflictingField} already exists`,
           )
