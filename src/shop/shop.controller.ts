@@ -10,14 +10,14 @@ import {
   UploadedFiles,
   UseGuards,
   UseInterceptors,
-} from '@nestjs/common'
-import { FileInterceptor } from '@nestjs/platform-express'
-import { Role } from '@prisma/client'
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
-import { RoleGuard } from 'src/role/role.guard'
-import { CreateShopDto } from './dtos/create-shop.dto'
-import { UpdateShopDto } from './dtos/update-shop.dto'
-import { ShopService } from './shop.service'
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Role } from '@prisma/client';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RoleGuard } from 'src/role/role.guard';
+import { CreateShopDto } from './dtos/create-shop.dto';
+import { UpdateShopDto } from './dtos/update-shop.dto';
+import { ShopService } from './shop.service';
 
 @Controller('shop')
 export class ShopController {
@@ -30,7 +30,7 @@ export class ShopController {
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
   @Get()
   async getShops() {
-    return this.shopService.getShops()
+    return this.shopService.getShops();
   }
 
   /**
@@ -40,7 +40,7 @@ export class ShopController {
   @UseGuards(JwtAuthGuard)
   @Get()
   async getPublicShops() {
-    return this.shopService.getPublicShops()
+    return this.shopService.getPublicShops();
   }
 
   /**
@@ -51,13 +51,13 @@ export class ShopController {
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
   @Get(':uuid')
   async getShop(@Param('uuid') uuid: string) {
-    return this.shopService.getShop({ uuid })
+    return this.shopService.getShop({ uuid });
   }
 
   @UseGuards(JwtAuthGuard)
   @Get(':uuid')
   async getPublicShop(@Param('uuid') uuid: string) {
-    return this.shopService.getPublicShop(uuid)
+    return this.shopService.getPublicShop(uuid);
   }
 
   /**
@@ -68,7 +68,7 @@ export class ShopController {
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
   @Post()
   async createShop(@Body() createShopDto: CreateShopDto) {
-    return this.shopService.createShop(createShopDto)
+    return this.shopService.createShop(createShopDto);
   }
 
   /**
@@ -79,7 +79,7 @@ export class ShopController {
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
   @Delete(':uuid')
   async deleteShop(@Param('uuid') uuid: string) {
-    return this.shopService.deleteShop({ uuid })
+    return this.shopService.deleteShop({ uuid });
   }
 
   /**
@@ -94,7 +94,7 @@ export class ShopController {
     @Param('uuid') uuid: string,
     @Body() updateShopDto: UpdateShopDto,
   ) {
-    return this.shopService.updateShop(uuid, updateShopDto)
+    return this.shopService.updateShop(uuid, updateShopDto);
   }
 
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
@@ -104,12 +104,12 @@ export class ShopController {
     @UploadedFile() file: Express.Multer.File,
     @Param('uuid') uuid: string,
   ) {
-    return this.shopService.updateLogo(uuid, file.buffer, file.originalname)
+    return this.shopService.updateLogo(uuid, file.buffer, file.originalname);
   }
 
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
   @Delete('logo/:uuid')
   async deleteLogo(@Param('uuid') uuid: string) {
-    return this.shopService.deleteLogo(uuid)
+    return this.shopService.deleteLogo(uuid);
   }
 }

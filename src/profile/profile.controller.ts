@@ -8,13 +8,13 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
-} from '@nestjs/common'
-import { FileInterceptor } from '@nestjs/platform-express'
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
-import { UserId } from 'src/user/user.decorator'
-import { ProfileUpdateDto } from './dto/profile-update.dto'
-import { ProfileService } from './profile.service'
-import { Express } from 'express'
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UserId } from 'src/user/user.decorator';
+import { ProfileUpdateDto } from './dto/profile-update.dto';
+import { ProfileService } from './profile.service';
+import { Express } from 'express';
 
 @Controller('profile')
 export class ProfileController {
@@ -23,7 +23,7 @@ export class ProfileController {
   @UseGuards(JwtAuthGuard)
   @Get()
   getPublicProfile(@UserId() id: number) {
-    return this.profileService.getPublicProfile(id)
+    return this.profileService.getPublicProfile(id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -32,7 +32,7 @@ export class ProfileController {
     @UserId() id: number,
     @Body() profileUpdateDto: ProfileUpdateDto,
   ) {
-    return this.profileService.updatePublicProfile(id, profileUpdateDto)
+    return this.profileService.updatePublicProfile(id, profileUpdateDto);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -46,12 +46,12 @@ export class ProfileController {
       id,
       file.buffer,
       file.originalname,
-    )
+    );
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete('profile-picture')
   deleteProfilePicture(@UserId() id: number) {
-    return this.profileService.deleteProfilePicture(id)
+    return this.profileService.deleteProfilePicture(id);
   }
 }

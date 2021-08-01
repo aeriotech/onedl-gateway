@@ -1,15 +1,15 @@
-import { Shop } from '@prisma/client'
-import { IsInt, IsUUID } from 'class-validator'
+import { Shop } from '@prisma/client';
+import { IsInt, IsUUID } from 'class-validator';
 
 export class CreateDiscountDto {
   @IsUUID()
-  uuid: string
+  uuid: string;
 
   @IsInt()
-  max?: number
+  max?: number;
 
   @IsInt()
-  parts?: number
+  parts?: number;
 
-  shop: Shop
+  shop: Shop;
 }

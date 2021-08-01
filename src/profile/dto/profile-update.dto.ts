@@ -1,12 +1,12 @@
-import { IsString } from 'class-validator'
+import { IsString } from 'class-validator';
 
 export class ProfileUpdateDto {
   @IsString()
-  firstName: string
+  firstName: string;
 
   @IsString()
-  lastName: string
+  lastName: string;
 
   @IsString()
-  bio: string
+  bio: string;
 }

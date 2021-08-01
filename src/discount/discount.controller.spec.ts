@@ -1,7 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing'
-import { DiscountController } from './discount.controller'
+import { Test, TestingModule } from '@nestjs/testing';
+import { DiscountController } from './discount.controller';
 
-jest.mock('@prisma/client')
+jest.mock('@prisma/client');
 
 // jest.mock('@primsa/client', () => {
 //   return {
@@ -19,21 +19,21 @@ jest.mock('@prisma/client')
 // })
 
 describe('DiscountController', () => {
-  let controller: DiscountController
+  let controller: DiscountController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [DiscountController],
-    }).compile()
+    }).compile();
 
-    controller = module.get<DiscountController>(DiscountController)
-  })
+    controller = module.get<DiscountController>(DiscountController);
+  });
 
   it('should be defined', () => {
-    expect(controller).toBeDefined()
-  })
+    expect(controller).toBeDefined();
+  });
 
   // describe('create', () => {
   //   it('should create entry in db and return the object', () => {})
   // })
-})
+});

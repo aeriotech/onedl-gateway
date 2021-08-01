@@ -4,13 +4,13 @@ import {
   Injectable,
   Logger,
   NotFoundException,
-} from '@nestjs/common'
-import { PrismaService } from '../prisma/prisma.service'
-import { Prisma, User } from '@prisma/client'
-import { RegisterDto } from './dto/register.dto'
-import { UpdatePublicUserDto } from './dto/update-public-user.dto'
-import * as bcrypt from 'bcrypt'
-import { UpdateUserDto } from './dto/update-user.dto'
+} from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { Prisma, User } from '@prisma/client';
+import { RegisterDto } from './dto/register.dto';
+import { UpdatePublicUserDto } from './dto/update-public-user.dto';
+import * as bcrypt from 'bcrypt';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -22,23 +22,23 @@ export class UserService {
     role: true,
     createdAt: true,
     updatedAt: true,
-  }
+  };
 
   async getPubicUser(user: Prisma.UserWhereUniqueInput) {
-    await this.checkUser(user)
+    await this.checkUser(user);
     return this.prisma.user.findUnique({
       where: user,
       select: this.public,
-    })
+    });
   }
 
   async updatePublicUser(id: number, updateUserDto: UpdatePublicUserDto) {
-    let hashedPassword
+    let hashedPassword;
     if (updateUserDto.password) {
       hashedPassword = await bcrypt.hash(
         updateUserDto.password.toString(),
         await bcrypt.genSalt(),
-      )
+      );
     }
 
     try {
@@ -49,15 +49,15 @@ export class UserService {
           password: hashedPassword,
         },
         select: this.public,
-      })
+      });
     } catch (e) {
-      this.handleException(e)
+      this.handleException(e);
     }
   }
 
   async createPublicUser(registerDto: RegisterDto) {
-    const salt = await bcrypt.genSalt()
-    const hashedPassword = await bcrypt.hash(registerDto.password, salt)
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(registerDto.password, salt);
 
     try {
       return this.prisma.user.create({
@@ -73,9 +73,9 @@ export class UserService {
           },
         },
         select: this.public,
-      })
+      });
     } catch (e) {
-      this.handleException(e)
+      this.handleException(e);
     }
   }
 
@@ -91,11 +91,11 @@ export class UserService {
           },
         ],
       },
-    })
+    });
   }
 
   async getUser(user: Prisma.UserWhereUniqueInput) {
-    await this.checkUser(user)
+    await this.checkUser(user);
     const { password, ...result } = await this.prisma.user.findUnique({
       where: user,
       include: {
@@ -105,28 +105,28 @@ export class UserService {
           },
         },
       },
-    })
-    return result
+    });
+    return result;
   }
 
   async getUsers() {
     return await (
       await this.prisma.user.findMany()
     ).map((user) => {
-      const { password, ...result } = user
-      return result
-    })
+      const { password, ...result } = user;
+      return result;
+    });
   }
 
   async updateUser(
     user: Prisma.UserWhereUniqueInput,
     updateUserDto: UpdateUserDto,
   ) {
-    await this.checkUser(user)
-    let hashedPassword
+    await this.checkUser(user);
+    let hashedPassword;
     if (updateUserDto.password) {
-      const salt = await bcrypt.genSalt()
-      hashedPassword = await bcrypt.hash(updateUserDto.password, salt)
+      const salt = await bcrypt.genSalt();
+      hashedPassword = await bcrypt.hash(updateUserDto.password, salt);
     }
     const { password, ...result } = await this.prisma.user.update({
       where: user,
@@ -134,21 +134,21 @@ export class UserService {
         ...updateUserDto,
         password: hashedPassword,
       },
-    })
-    return result
+    });
+    return result;
   }
 
   async deleteUser(id: number) {
-    await this.checkUser({ id })
+    await this.checkUser({ id });
     return this.prisma.user.delete({
       where: { id },
       select: this.public,
-    })
+    });
   }
 
   async checkUser(user: Prisma.UserWhereUniqueInput) {
     if (!(await this.prisma.user.findUnique({ where: user }))) {
-      throw new NotFoundException('This user does not exist')
+      throw new NotFoundException('This user does not exist');
     }
   }
 
@@ -156,12 +156,12 @@ export class UserService {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       switch (error.code) {
         case 'P2002':
-          const conflictingField = error.meta['target'][0]
+          const conflictingField = error.meta['target'][0];
           throw new ConflictException(
             `User with this ${conflictingField} already exists`,
-          )
+          );
         default:
-          throw new BadRequestException(error.code)
+          throw new BadRequestException(error.code);
       }
     }
   }

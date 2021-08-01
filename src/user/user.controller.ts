@@ -7,15 +7,15 @@ import {
   Post,
   Put,
   UseGuards,
-} from '@nestjs/common'
-import { Role } from '@prisma/client'
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
-import { RoleGuard } from 'src/role/role.guard'
-import { RegisterDto } from './dto/register.dto'
-import { UpdatePublicUserDto } from './dto/update-public-user.dto'
-import { UpdateUserDto } from './dto/update-user.dto'
-import { UserId } from './user.decorator'
-import { UserService } from './user.service'
+} from '@nestjs/common';
+import { Role } from '@prisma/client';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RoleGuard } from 'src/role/role.guard';
+import { RegisterDto } from './dto/register.dto';
+import { UpdatePublicUserDto } from './dto/update-public-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserId } from './user.decorator';
+import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
@@ -29,19 +29,19 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async getPublicUser(@UserId() id: number) {
-    return this.userService.getPubicUser({ id })
+    return this.userService.getPubicUser({ id });
   }
 
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
   @Get(':username')
   async getUser(@Param('username') username: string) {
-    return this.userService.getUser({ username })
+    return this.userService.getUser({ username });
   }
 
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
   @Get()
   async getUsers() {
-    return this.userService.getUsers()
+    return this.userService.getUsers();
   }
 
   /**
@@ -56,7 +56,7 @@ export class UserController {
     @Param('username') username: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return this.userService.updateUser({ username }, updateUserDto)
+    return this.userService.updateUser({ username }, updateUserDto);
   }
 
   /**
@@ -66,7 +66,7 @@ export class UserController {
    */
   @Post()
   async register(@Body() body: RegisterDto) {
-    return this.userService.createPublicUser(body)
+    return this.userService.createPublicUser(body);
   }
 
   /**
@@ -81,7 +81,7 @@ export class UserController {
     @UserId() id: number,
     @Body() updateUserDto: UpdatePublicUserDto,
   ) {
-    return this.userService.updatePublicUser(id, updateUserDto)
+    return this.userService.updatePublicUser(id, updateUserDto);
   }
 
   /**
@@ -92,6 +92,6 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Delete()
   async delete(@UserId() id: number) {
-    return this.userService.deleteUser(id)
+    return this.userService.deleteUser(id);
   }
 }

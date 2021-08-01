@@ -4,9 +4,9 @@ import {
   Injectable,
   mixin,
   UnauthorizedException,
-} from '@nestjs/common'
-import { Role } from '@prisma/client'
-import { PrismaService } from 'src/prisma/prisma.service'
+} from '@nestjs/common';
+import { Role } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 export const RoleGuard = (role: Role) => {
   @Injectable()
@@ -14,18 +14,18 @@ export const RoleGuard = (role: Role) => {
     constructor(private readonly prisma: PrismaService) {}
 
     async canActivate(context: ExecutionContext) {
-      const request = context.switchToHttp().getRequest()
-      const id = request.user.userId
+      const request = context.switchToHttp().getRequest();
+      const id = request.user.userId;
       const user = await this.prisma.user.findUnique({
         where: { id },
-      })
+      });
       if (!user) {
-        throw new UnauthorizedException()
+        throw new UnauthorizedException();
       }
-      return user.role == role
+      return user.role == role;
     }
   }
 
-  const guard = mixin(RoleGuardMixin)
-  return guard
-}
+  const guard = mixin(RoleGuardMixin);
+  return guard;
+};
