@@ -31,11 +31,14 @@ export class DiscountService {
   }
 
   async getDiscount(where: Prisma.DiscountWhereUniqueInput) {
-    try {
-      return await this.prisma.discount.findUnique({ where });
-    } catch (e) {
-      this.handleException(e);
-    }
+    await this.checkDiscount(where);
+    return this.prisma.discount.findUnique({
+      where,
+      include: {
+        shop: true,
+        category: true,
+      },
+    });
   }
 
   async getDiscounts() {
@@ -47,6 +50,13 @@ export class DiscountService {
       return await this.prisma.discount.delete({ where });
     } catch (e) {
       this.handleException(e);
+    }
+  }
+
+  private async checkDiscount(where: Prisma.DiscountWhereUniqueInput) {
+    const discount = await this.prisma.discount.findUnique({ where });
+    if (!discount) {
+      throw new NotFoundException('Discount not found');
     }
   }
 
