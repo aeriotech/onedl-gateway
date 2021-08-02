@@ -25,7 +25,7 @@ export class ShopService {
   };
 
   toUUID(name: string) {
-    return name.replace(' ', '-').toLowerCase();
+    return name.replace(/ /gm, '-').toLowerCase();
   }
 
   async createShop(createShopDto: CreateShopDto) {
@@ -131,7 +131,7 @@ export class ShopService {
             `Shop with this ${conflictingField} already exists`,
           );
         case 'P2025':
-          throw new NotFoundException('Shop does not exists');
+          throw new NotFoundException('Shop does not exist');
         default:
           throw new BadRequestException(error.code);
       }
