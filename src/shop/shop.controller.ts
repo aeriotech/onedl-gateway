@@ -57,7 +57,7 @@ export class ShopController {
   @UseGuards(JwtAuthGuard)
   @Get(':uuid')
   async getPublicShop(@Param('uuid') uuid: string) {
-    return this.shopService.getPublicShop(uuid);
+    return this.shopService.getPublicShop({ uuid });
   }
 
   /**

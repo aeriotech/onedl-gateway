@@ -9,6 +9,7 @@ import { FilesService } from 'src/files/files.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateShopDto } from './dtos/create-shop.dto';
 import { UpdateShopDto } from './dtos/update-shop.dto';
+import { PublicShop } from './models/public.shop.model';
 
 @Injectable()
 export class ShopService {
@@ -20,8 +21,11 @@ export class ShopService {
   private public: Prisma.ShopSelect = {
     name: true,
     uuid: true,
-    logo: true,
-    discounts: true,
+    logo: {
+      select: {
+        url: true,
+      },
+    },
   };
 
   toUUID(name: string) {
@@ -44,8 +48,8 @@ export class ShopService {
     return this.prisma.shop.findUnique({ where });
   }
 
-  async getShops() {
-    return this.prisma.shop.findMany();
+  async getShops(where?: Prisma.ShopWhereInput) {
+    return this.prisma.shop.findMany({ where });
   }
 
   async updateShop(uuid: string, updateShopDto: UpdateShopDto) {
@@ -103,16 +107,16 @@ export class ShopService {
     });
   }
 
-  async getPublicShop(uuid: string) {
-    await this.checkShop({ uuid });
+  async getPublicShop(where: Prisma.ShopWhereUniqueInput): Promise<PublicShop> {
+    await this.checkShop(where);
     const shop = await this.prisma.shop.findFirst({
       where: {
-        uuid,
+        ...where,
         public: true,
       },
       select: this.public,
     });
-    return shop;
+    return shop as PublicShop;
   }
 
   private async checkShop(where: Prisma.ShopWhereUniqueInput) {

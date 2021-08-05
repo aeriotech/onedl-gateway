@@ -8,17 +8,20 @@ generator client {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  role      Role      @default(USER)
-  username  String    @unique
-  email     String    @unique
-  password  String
-  profile   Profile?  @relation(fields: [profileId], references: [id])
-  profileId Int?
-  score     Int       @default(0)
-  coupons   Coupon[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt
+  id               Int           @id @default(autoincrement())
+  role             Role          @default(USER)
+  username         String        @unique
+  email            String        @unique
+  password         String
+  profile          Profile?      @relation(fields: [profileId], references: [id])
+  profileId        Int?
+  score            Int           @default(0)
+  lastDaily        DateTime      @default(now())
+  coupons          Coupon[]
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime?     @updatedAt
+  dailySessionUuid String?
+  dailySession     DailySession? @relation
 }
 
 enum Role {
@@ -106,4 +109,17 @@ model PublicFile {
   Shop      Shop[]
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
+}
+
+model Config {
+  key   String @unique
+  value String
+}
+
+model DailySession {
+  id        Int      @id @default(autoincrement())
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    Int      @unique
+  shopIds   Int[]
+  createdAt DateTime @default(now())
 }

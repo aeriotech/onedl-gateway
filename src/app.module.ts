@@ -10,6 +10,7 @@ import { ShopModule } from './shop/shop.module';
 import { CouponModule } from './coupon/coupon.module';
 import { FilesModule } from './files/files.module';
 import { RoleModule } from './role/role.module';
+import { DailyModule } from './daily/daily.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { RoleModule } from './role/role.module';
     CouponModule,
     FilesModule,
     RoleModule,
+    DailyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
