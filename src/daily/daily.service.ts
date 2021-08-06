@@ -1,12 +1,13 @@
 import {
-  BadGatewayException,
-  ConflictException,
+  BadRequestException,
   ForbiddenException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { Prisma, Shop } from '@prisma/client';
-import { randomUUID } from 'crypto';
 import * as dayjs from 'dayjs';
+import { CouponService } from 'src/coupon/coupon.service';
+import { DiscountService } from 'src/discount/discount.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PublicShop } from 'src/shop/models/public.shop.model';
 import { ShopService } from 'src/shop/shop.service';
@@ -20,13 +21,20 @@ export class DailyService {
     private readonly prisma: PrismaService,
     private readonly userService: UserService,
     private readonly shopService: ShopService,
+    private readonly discountService: DiscountService,
+    private readonly couponService: CouponService,
   ) {}
+
+  // TODO: Fetch from config database
+  private readonly dailyDuration = 24; // TODO: User specific
+  private readonly selectAmount = 1;
+  private readonly displayAmount = 4;
 
   async checkAvailability(userId: number): Promise<DailyAvailable> {
     const user = await this.userService.getUser({ id: userId });
 
     const lastDaily = dayjs(user.lastDaily);
-    const nextDaily = lastDaily.add(1, 'day'); // TODO: Fetch from default config or user specific multiplier
+    const nextDaily = lastDaily.add(this.dailyDuration, 'hour');
 
     const available = dayjs().isAfter(nextDaily);
 
@@ -37,17 +45,66 @@ export class DailyService {
   }
 
   private async getRandomShops(): Promise<Array<Shop>> {
+    const now = dayjs().toISOString();
     const allShops = await this.prisma.shop.findMany({
-      where: { public: true },
+      where: {
+        public: true,
+        discounts: {
+          some: {
+            public: true,
+            AND: [
+              {
+                OR: [
+                  {
+                    validFrom: {
+                      gte: now,
+                    },
+                  },
+                  {
+                    validFrom: {
+                      equals: null,
+                    },
+                  },
+                ],
+              },
+              {
+                OR: [
+                  {
+                    validTo: {
+                      equals: now,
+                    },
+                  },
+                  {
+                    validTo: {
+                      equals: null,
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
     });
 
+    if (allShops.length === 0) {
+      throw new NotFoundException('No shops available');
+    }
+
     const selectedShops: Array<Shop> = [];
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i < this.displayAmount; i++) {
+      // TODO: Get amount of coupons from config
       const randomShopIndex = Math.floor(Math.random() * allShops.length);
       selectedShops.push(allShops[randomShopIndex]);
     }
 
     return selectedShops;
+  }
+
+  private async deleteDailySession(where: Prisma.DailySessionWhereUniqueInput) {
+    try {
+      return this.prisma.dailySession.delete({ where });
+    } catch (e) {}
   }
 
   private async getPublicShopsFromIds(
@@ -74,15 +131,6 @@ export class DailyService {
       throw new ForbiddenException('Daily discount is currently not available');
     }
 
-    await this.prisma.user.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        lastDaily: dayjs().toISOString(),
-      },
-    });
-
     try {
       await this.prisma.dailySession.delete({ where: { userId } });
     } catch (e) {}
@@ -96,6 +144,15 @@ export class DailyService {
       },
     });
 
+    await this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        lastDaily: dayjs().toISOString(),
+      },
+    });
+
     const publicSelectedShops = await this.getPublicShopsFromIds(
       selectedShops.map((shop) => shop.id),
     );
@@ -106,8 +163,36 @@ export class DailyService {
   }
 
   async select(userId: number, selected: number): Promise<DailySelect> {
+    const dailySession = await this.prisma.dailySession.findUnique({
+      where: { userId },
+    });
+
+    if (!dailySession) {
+      throw new NotFoundException('No daily discount session started');
+    }
+
+    if (selected < 0 || selected > this.displayAmount - 1) {
+      throw new BadRequestException('Number is out of range');
+    }
+
+    const selectedShopId = dailySession.shopIds[selected];
+
+    const randomDiscount = await this.discountService.getRandomDiscount({
+      shopId: selectedShopId,
+    });
+
+    const coupon = await this.couponService.generateCoupon(userId, {
+      id: randomDiscount.id,
+    });
+
+    const publicCoupon = await this.couponService.getPublicCoupon({
+      id: coupon.id,
+    });
+
+    await this.deleteDailySession({ userId });
+
     return {
-      discount: {},
+      coupon: publicCoupon,
     };
   }
 }

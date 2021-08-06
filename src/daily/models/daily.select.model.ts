@@ -1,5 +1,5 @@
-import { PublicDiscount } from 'src/discount/models/public.discount.model';
+import { PublicCoupon } from 'src/coupon/models/public.coupon.model';
 
 export class DailySelect {
-  discount: PublicDiscount;
+  coupon: PublicCoupon;
 }

@@ -24,9 +24,9 @@ export class DiscountController {
   }
 
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
-  @Get(':uuid')
-  getDiscount(@Param('uuid') uuid: string) {
-    return this.discountService.getDiscount({ uuid });
+  @Get(':id')
+  getDiscount(@Param('id') id: number) {
+    return this.discountService.getDiscount({ id });
   }
 
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
@@ -36,8 +36,8 @@ export class DiscountController {
   }
 
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
-  @Delete(':uuid')
-  deleteDiscount(@Param('uuid') uuid: string) {
-    return this.discountService.deleteDiscount({ uuid });
+  @Delete(':id')
+  deleteDiscount(@Param('id') id: number) {
+    return this.discountService.deleteDiscount({ id });
   }
 }

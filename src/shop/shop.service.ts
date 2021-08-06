@@ -18,7 +18,7 @@ export class ShopService {
     private readonly filesService: FilesService,
   ) {}
 
-  private public: Prisma.ShopSelect = {
+  readonly public: Prisma.ShopSelect = {
     name: true,
     uuid: true,
     logo: {

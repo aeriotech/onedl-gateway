@@ -4,27 +4,31 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import * as dayjs from 'dayjs';
+import { Discount, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateDiscountDto } from './dto/create-discount.dto';
+import { ShopService } from 'src/shop/shop.service';
 
 @Injectable()
 export class DiscountService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly shopService: ShopService,
+  ) {}
 
-  toUUID(name: string) {
-    return name.replace(/ /gm, '-').toLowerCase();
-  }
+  readonly public: Prisma.DiscountSelect = {
+    name: true,
+    parts: true,
+    category: true,
+    shop: {
+      select: this.shopService.public,
+    },
+  };
 
   async createDiscount(data: CreateDiscountDto) {
-    const uuid = this.toUUID(data.name);
     try {
-      return await this.prisma.discount.create({
-        data: {
-          ...data,
-          uuid,
-        },
-      });
+      return await this.prisma.discount.create({ data });
     } catch (e) {
       this.handleException(e);
     }
@@ -39,6 +43,48 @@ export class DiscountService {
         category: true,
       },
     });
+  }
+
+  async getRandomDiscount(where: Prisma.DiscountWhereInput): Promise<Discount> {
+    const now = dayjs().toISOString();
+    const discounts = await this.prisma.discount.findMany({
+      where: {
+        ...where,
+        public: true,
+        AND: [
+          {
+            OR: [
+              {
+                validFrom: {
+                  gte: now,
+                },
+              },
+              {
+                validFrom: {
+                  equals: null,
+                },
+              },
+            ],
+          },
+          {
+            OR: [
+              {
+                validTo: {
+                  equals: now,
+                },
+              },
+              {
+                validTo: {
+                  equals: null,
+                },
+              },
+            ],
+          },
+        ],
+      },
+    });
+    const randomIndex = Math.floor(Math.random() * discounts.length);
+    return discounts[randomIndex];
   }
 
   async getDiscounts() {

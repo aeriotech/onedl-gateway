@@ -5,6 +5,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { ShopService } from 'src/shop/shop.service';
 import { FilesService } from 'src/files/files.service';
+import { DiscountService } from 'src/discount/discount.service';
+import { CouponService } from 'src/coupon/coupon.service';
 
 @Module({
   providers: [
@@ -13,6 +15,8 @@ import { FilesService } from 'src/files/files.service';
     UserService,
     ShopService,
     FilesService,
+    DiscountService,
+    CouponService,
   ],
   controllers: [DailyController],
 })
