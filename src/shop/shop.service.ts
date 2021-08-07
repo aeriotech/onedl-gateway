@@ -48,8 +48,17 @@ export class ShopService {
     return this.prisma.shop.findUnique({ where });
   }
 
-  async getShops(where?: Prisma.ShopWhereInput) {
-    return this.prisma.shop.findMany({ where });
+  async getShops(discount?: Prisma.DiscountWhereInput) {
+    return this.prisma.shop.findMany({
+      where: {
+        discounts: {
+          some: discount,
+        },
+      },
+      orderBy: {
+        name: 'asc',
+      },
+    });
   }
 
   async updateShop(uuid: string, updateShopDto: UpdateShopDto) {
@@ -98,12 +107,18 @@ export class ShopService {
     }
   }
 
-  async getPublicShops() {
+  async getPublicShops(discount?: Prisma.DiscountWhereInput) {
     return this.prisma.shop.findMany({
       where: {
+        discounts: {
+          some: discount,
+        },
         public: true,
       },
       select: this.public,
+      orderBy: {
+        name: 'asc',
+      },
     });
   }
 
