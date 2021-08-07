@@ -11,6 +11,7 @@ import { CouponModule } from './coupon/coupon.module';
 import { FilesModule } from './files/files.module';
 import { RoleModule } from './role/role.module';
 import { DailyModule } from './daily/daily.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { DailyModule } from './daily/daily.module';
     FilesModule,
     RoleModule,
     DailyModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
