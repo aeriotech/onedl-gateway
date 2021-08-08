@@ -20,6 +20,7 @@ export class UserService {
     username: true,
     email: true,
     role: true,
+    plan: true,
     createdAt: true,
     updatedAt: true,
   };

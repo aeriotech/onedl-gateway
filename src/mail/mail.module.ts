@@ -3,8 +3,9 @@ import { MailService } from './mail.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { join } from 'path';
-import { MailController } from './mail.controller';
 import { ConfigService } from '@nestjs/config';
+import { UserService } from 'src/user/user.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { ConfigService } from '@nestjs/config';
           },
         },
         defaults: {
-          from: `"No Reply" <${config.get('MAIL_FROM')}>`,
+          from: `"Fundl" <${config.get('MAIL_FROM')}>`,
         },
         template: {
           dir: join(__dirname, '..', '..', 'mail', 'templates'),
@@ -32,8 +33,7 @@ import { ConfigService } from '@nestjs/config';
       }),
     }),
   ],
-  providers: [MailService],
+  providers: [MailService, PrismaService, UserService],
   exports: [MailService],
-  controllers: [MailController],
 })
 export class MailModule {}

@@ -12,6 +12,8 @@ import { FilesModule } from './files/files.module';
 import { RoleModule } from './role/role.module';
 import { DailyModule } from './daily/daily.module';
 import { MailModule } from './mail/mail.module';
+import { CardValidatorModule } from './card-validator/card-validator.module';
+import { PlanModule } from './plan/plan.module';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { MailModule } from './mail/mail.module';
     RoleModule,
     DailyModule,
     MailModule,
+    CardValidatorModule,
+    PlanModule,
   ],
   controllers: [AppController],
   providers: [AppService],

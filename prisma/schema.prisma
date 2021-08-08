@@ -13,6 +13,7 @@ model User {
   username         String        @unique
   email            String        @unique
   password         String
+  plan             Plan          @default(NORMAL)
   profile          Profile?      @relation(fields: [profileId], references: [id])
   profileId        Int?
   score            Int           @default(0)
@@ -27,6 +28,11 @@ model User {
 enum Role {
   USER
   ADMIN
+}
+
+enum Plan {
+  NORMAL
+  STUDENT
 }
 
 model Profile {
