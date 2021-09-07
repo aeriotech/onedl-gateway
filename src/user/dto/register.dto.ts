@@ -16,10 +16,6 @@ export class RegisterDto {
   email: string;
 
   @IsNotEmpty()
-  @IsPhoneNumber()
-  phone: string;
-
-  @IsNotEmpty()
   @Length(8)
   password: string;
 

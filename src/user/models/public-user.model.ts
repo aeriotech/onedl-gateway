@@ -13,10 +13,6 @@ export class PublicUser implements User {
   email: string;
   emailConfirmed: boolean;
 
-  @Expose()
-  phone: string;
-  phoneConfirmed: boolean;
-
   password: string;
 
   profileId: number;

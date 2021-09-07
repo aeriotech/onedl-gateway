@@ -53,7 +53,6 @@ export class UserService {
   async createPublicUser({
     username,
     email,
-    phone,
     password,
     firstName,
     lastName,
@@ -66,7 +65,6 @@ export class UserService {
         data: {
           username,
           email,
-          phone,
           password: hashedPassword,
           profile: {
             create: {
