@@ -34,6 +34,6 @@ export class PlanService {
 
     await this.userService.updateUser({ id: userId }, { plan: Plan.STUDENT });
 
-    return this.userService.getPubicUser({ id: userId });
+    return this.userService.getPublicUser({ id: userId });
   }
 }

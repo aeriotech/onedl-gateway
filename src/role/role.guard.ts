@@ -26,6 +26,5 @@ export const RoleGuard = (role: Role) => {
     }
   }
 
-  const guard = mixin(RoleGuardMixin);
-  return guard;
+  return mixin(RoleGuardMixin);
 };

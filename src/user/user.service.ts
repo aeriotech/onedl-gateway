@@ -2,35 +2,29 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
-  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma, User } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { RegisterDto } from './dto/register.dto';
 import { UpdatePublicUserDto } from './dto/update-public-user.dto';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { EmailConfirmationService } from 'src/email-confirmation/email-confirmation.service';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly emailConfirmationService: EmailConfirmationService,
+  ) {}
 
-  private public: Prisma.UserSelect = {
-    username: true,
-    email: true,
-    role: true,
-    plan: true,
-    createdAt: true,
-    updatedAt: true,
-  };
-
-  async getPubicUser(user: Prisma.UserWhereUniqueInput) {
-    await this.checkUser(user);
-    return this.prisma.user.findUnique({
-      where: user,
-      select: this.public,
+  async getPublicUser(select: Prisma.UserWhereUniqueInput) {
+    await this.checkUser(select);
+    const user = await this.prisma.user.findUnique({
+      where: select,
     });
+    return user;
   }
 
   async updatePublicUser(id: number, updateUserDto: UpdatePublicUserDto) {
@@ -43,44 +37,55 @@ export class UserService {
     }
 
     try {
-      return await this.prisma.user.update({
+      const user = await this.prisma.user.update({
         where: { id },
         data: {
           ...updateUserDto,
           password: hashedPassword,
         },
-        select: this.public,
       });
+      return user;
     } catch (e) {
       this.handleException(e);
     }
   }
 
-  async createPublicUser(registerDto: RegisterDto) {
+  async createPublicUser({
+    username,
+    email,
+    phone,
+    password,
+    firstName,
+    lastName,
+  }: RegisterDto) {
     const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(registerDto.password, salt);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     try {
-      return this.prisma.user.create({
+      const user = await this.prisma.user.create({
         data: {
-          username: registerDto.username,
-          email: registerDto.email,
+          username,
+          email,
+          phone,
           password: hashedPassword,
           profile: {
             create: {
-              firstName: registerDto.firstName,
-              lastName: registerDto.lastName,
+              firstName,
+              lastName,
             },
           },
         },
-        select: this.public,
       });
+
+      this.emailConfirmationService.sendConfirmationEmail(user);
+
+      return user;
     } catch (e) {
       this.handleException(e);
     }
   }
 
-  async findByUsernameOrEmail(usernameOrEmail: string): Promise<User | null> {
+  async findByUsernameOrEmail(usernameOrEmail: string) {
     return this.prisma.user.findFirst({
       where: {
         OR: [
@@ -143,7 +148,6 @@ export class UserService {
     await this.checkUser({ id });
     return this.prisma.user.delete({
       where: { id },
-      select: this.public,
     });
   }
 
@@ -164,6 +168,7 @@ export class UserService {
         default:
           throw new BadRequestException(error.code);
       }
+      throw error;
     }
   }
 }

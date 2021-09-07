@@ -18,9 +18,7 @@ export class CouponService {
   private readonly public: Prisma.CouponSelect = {
     public: true,
     validTo: true,
-    discount: {
-      select: this.discountService.public,
-    },
+    discount: true,
     createdAt: true,
   };
 

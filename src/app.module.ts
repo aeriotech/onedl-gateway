@@ -14,6 +14,7 @@ import { DailyModule } from './daily/daily.module';
 import { MailModule } from './mail/mail.module';
 import { CardValidatorModule } from './card-validator/card-validator.module';
 import { PlanModule } from './plan/plan.module';
+import { EmailConfirmationModule } from './email-confirmation/email-confirmation.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { PlanModule } from './plan/plan.module';
     MailModule,
     CardValidatorModule,
     PlanModule,
+    EmailConfirmationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

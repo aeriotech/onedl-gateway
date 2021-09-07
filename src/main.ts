@@ -4,19 +4,27 @@ import { NestFactory } from '@nestjs/core';
 import { config } from 'aws-sdk';
 import { AppModule } from './app.module';
 import * as morgan from 'morgan';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      skipMissingProperties: true,
       forbidNonWhitelisted: true,
     }),
   );
 
   app.use(morgan('tiny'));
   app.enableCors();
+
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('Fundl API')
+    .setDescription('The Fundl API documentation')
+    .setVersion('1.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('api', app, document);
 
   const configService = app.get(ConfigService);
   config.update({

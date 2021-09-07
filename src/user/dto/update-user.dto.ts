@@ -1,5 +1,5 @@
 import { Plan, Role } from '@prisma/client';
-import { IsEmail, IsEnum, IsString, Length, NotEquals } from 'class-validator';
+import { IsBoolean, IsEmail, IsEnum, IsString, Length } from 'class-validator';
 
 export class UpdateUserDto {
   @IsString()
@@ -18,4 +18,10 @@ export class UpdateUserDto {
 
   @IsEnum(Plan)
   plan?: Plan;
+
+  @IsBoolean()
+  emailConfirmed?: boolean;
+
+  @IsBoolean()
+  phoneConfirmed?: boolean;
 }

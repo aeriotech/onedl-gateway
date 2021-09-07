@@ -11,8 +11,6 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  private readonly logger = new Logger(AuthService.name);
-
   async validateUser(authLoginDto: AuthLoginDto) {
     const { username, password } = authLoginDto;
     const user = await this.userService.findByUsernameOrEmail(username);

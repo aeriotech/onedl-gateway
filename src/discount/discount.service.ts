@@ -17,15 +17,6 @@ export class DiscountService {
     private readonly shopService: ShopService,
   ) {}
 
-  readonly public: Prisma.DiscountSelect = {
-    name: true,
-    parts: true,
-    category: true,
-    shop: {
-      select: this.shopService.public,
-    },
-  };
-
   async createDiscount(data: CreateDiscountDto) {
     try {
       return await this.prisma.discount.create({ data });
@@ -45,7 +36,19 @@ export class DiscountService {
     });
   }
 
-  async getRandomDiscount(where: Prisma.DiscountWhereInput): Promise<Discount> {
+  async getRandomDiscount(where: Prisma.DiscountWhereInput) {
+    const discounts = await this.getPublicDiscounts(where);
+    const randomIndex = Math.floor(Math.random() * discounts.length);
+    return discounts[randomIndex];
+  }
+
+  async getDiscounts() {
+    return this.prisma.discount.findMany();
+  }
+
+  async getPublicDiscounts(
+    where?: Prisma.DiscountWhereInput,
+  ): Promise<Discount[]> {
     const now = dayjs().toISOString();
     const discounts = await this.prisma.discount.findMany({
       where: {
@@ -83,12 +86,8 @@ export class DiscountService {
         ],
       },
     });
-    const randomIndex = Math.floor(Math.random() * discounts.length);
-    return discounts[randomIndex];
-  }
-
-  async getDiscounts() {
-    return this.prisma.discount.findMany();
+    console.log(discounts);
+    return discounts;
   }
 
   async deleteDiscount(where: Prisma.DiscountWhereUniqueInput) {

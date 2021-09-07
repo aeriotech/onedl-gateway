@@ -1,14 +1,16 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MailService } from './mail.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { join } from 'path';
-import { ConfigService } from '@nestjs/config';
-import { UserService } from 'src/user/user.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [
+    ConfigModule,
+    forwardRef(() => UserModule),
     MailerModule.forRootAsync({
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => ({
@@ -33,7 +35,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
       }),
     }),
   ],
-  providers: [MailService, PrismaService, UserService],
+  providers: [MailService, PrismaService],
   exports: [MailService],
 })
 export class MailModule {}

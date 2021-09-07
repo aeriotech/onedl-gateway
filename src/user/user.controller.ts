@@ -7,13 +7,16 @@ import {
   Post,
   Put,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RoleGuard } from 'src/role/role.guard';
+import { PublicFilter } from 'src/utils/filter.interceptor';
 import { RegisterDto } from './dto/register.dto';
 import { UpdatePublicUserDto } from './dto/update-public-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { PublicUser } from './models/public-user.model';
 import { UserId } from './user.decorator';
 import { UserService } from './user.service';
 
@@ -27,20 +30,22 @@ export class UserController {
    * @returns The user
    */
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(PublicFilter(PublicUser))
   @Get('me')
-  async getPublicUser(@UserId() id: number) {
-    return this.userService.getPubicUser({ id });
+  getPublicUser(@UserId() id: number) {
+    return this.userService.getPublicUser({ id });
   }
 
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
+  @UseInterceptors(PublicFilter(PublicUser))
   @Get(':username')
-  async getUser(@Param('username') username: string) {
+  getUser(@Param('username') username: string) {
     return this.userService.getUser({ username });
   }
 
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
   @Get()
-  async getUsers() {
+  getUsers() {
     return this.userService.getUsers();
   }
 
@@ -52,7 +57,7 @@ export class UserController {
    */
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
   @Put(':username')
-  async updateUser(
+  updateUser(
     @Param('username') username: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
@@ -65,7 +70,8 @@ export class UserController {
    * @returns The newly created user
    */
   @Post()
-  async register(@Body() body: RegisterDto) {
+  @UseInterceptors(PublicFilter(PublicUser))
+  register(@Body() body: RegisterDto) {
     return this.userService.createPublicUser(body);
   }
 
@@ -76,11 +82,9 @@ export class UserController {
    * @returns Updated user
    */
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(PublicFilter(PublicUser))
   @Put()
-  async update(
-    @UserId() id: number,
-    @Body() updateUserDto: UpdatePublicUserDto,
-  ) {
+  update(@UserId() id: number, @Body() updateUserDto: UpdatePublicUserDto) {
     return this.userService.updatePublicUser(id, updateUserDto);
   }
 
@@ -90,8 +94,9 @@ export class UserController {
    * @returns Deleted user
    */
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(PublicFilter(PublicUser))
   @Delete()
-  async delete(@UserId() id: number) {
+  delete(@UserId() id: number) {
     return this.userService.deleteUser(id);
   }
 }

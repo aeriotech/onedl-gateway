@@ -12,10 +12,13 @@ model User {
   role             Role          @default(USER)
   username         String        @unique
   email            String        @unique
+  phone            String        @unique
   password         String
   plan             Plan          @default(NORMAL)
   profile          Profile?      @relation(fields: [profileId], references: [id])
   profileId        Int?
+  emailConfirmed   Boolean?      @default(false)
+  phoneConfirmed   Boolean?      @default(false)
   score            Int           @default(0)
   lastDaily        DateTime      @default(now())
   coupons          Coupon[]
@@ -78,21 +81,23 @@ model Category {
 }
 
 model Discount {
-  id           Int       @id @default(autoincrement())
+  id           Int         @id @default(autoincrement())
   name         String
   coupons      Coupon[]
   max          Int?
-  parts        Int       @default(1)
-  public       Boolean   @default(false)
+  parts        Int         @default(1)
+  public       Boolean     @default(false)
   validFrom    DateTime?
   validTo      DateTime?
   validTime    Int?
-  category     Category? @relation(fields: [categoryUuid], references: [uuid])
+  thumbnail    PublicFile? @relation(fields: [thumbnailId], references: [id])
+  thumbnailId  Int?
+  category     Category?   @relation(fields: [categoryUuid], references: [uuid])
   categoryUuid String?
-  shop         Shop      @relation(fields: [shopId], references: [id])
+  shop         Shop        @relation(fields: [shopId], references: [id])
   shopId       Int
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime? @updatedAt
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime?   @updatedAt
 }
 
 model Coupon {
@@ -108,13 +113,14 @@ model Coupon {
 }
 
 model PublicFile {
-  id        Int       @id @default(autoincrement())
+  id        Int        @id @default(autoincrement())
   url       String
-  key       String    @unique
+  key       String     @unique
   Profile   Profile[]
   Shop      Shop[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt
+  Discount  Discount[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime?  @updatedAt
 }
 
 model PrivateFile {

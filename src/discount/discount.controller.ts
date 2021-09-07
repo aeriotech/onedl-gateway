@@ -6,16 +6,26 @@ import {
   Param,
   Post,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RoleGuard } from 'src/role/role.guard';
+import { PublicFilter } from 'src/utils/filter.interceptor';
 import { DiscountService } from './discount.service';
 import { CreateDiscountDto } from './dto/create-discount.dto';
+import { PublicDiscount } from './models/public-discount.model';
 
 @Controller('discount')
 export class DiscountController {
   constructor(private readonly discountService: DiscountService) {}
+
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(PublicFilter(PublicDiscount))
+  @Get()
+  getPublicDiscounts() {
+    return this.discountService.getPublicDiscounts();
+  }
 
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
   @Post()
