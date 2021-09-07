@@ -12,13 +12,11 @@ model User {
   role             Role          @default(USER)
   username         String        @unique
   email            String        @unique
-  phone            String        @unique
   password         String
   plan             Plan          @default(NORMAL)
   profile          Profile?      @relation(fields: [profileId], references: [id])
   profileId        Int?
   emailConfirmed   Boolean?      @default(false)
-  phoneConfirmed   Boolean?      @default(false)
   score            Int           @default(0)
   lastDaily        DateTime      @default(now())
   coupons          Coupon[]
