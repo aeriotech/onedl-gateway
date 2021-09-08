@@ -1,6 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Plan, Role } from '@prisma/client';
-import { IsBoolean, IsEmail, IsEnum, IsString, Length } from 'class-validator';
+import {
+  IsBoolean,
+  IsEmail,
+  IsEnum,
+  IsJWT,
+  IsString,
+  Length,
+} from 'class-validator';
 
 export class UpdateUserDto {
   @IsString()
@@ -27,4 +34,7 @@ export class UpdateUserDto {
 
   @IsBoolean()
   phoneConfirmed?: boolean;
+
+  @IsJWT()
+  forgotPasswordToken?: string;
 }

@@ -13,7 +13,7 @@ import { UserModule } from 'src/user/user.module';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
+        secret: configService.get<string>('EMAIL_CONFIRM_SECRET'),
       }),
       inject: [ConfigService],
     }),

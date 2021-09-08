@@ -32,7 +32,7 @@ export class EmailConfirmationService {
   }
 
   async confirmEmail({ token }: ConfirmEmailDto) {
-    const email = await this.decodeConfirmationToken(token);
+    const email = this.decodeConfirmationToken(token);
     this.logger.verbose(`Confirming email ${email}`);
     const user = await this.userService.getUser({ email });
     if (user.emailConfirmed) {
@@ -43,11 +43,9 @@ export class EmailConfirmationService {
     this.logger.verbose(`Email ${email} confirmed`);
   }
 
-  async decodeConfirmationToken(token: string) {
+  decodeConfirmationToken(token: string) {
     try {
-      const payload: EmailVerificationPayload = await this.jwtService.verify(
-        token,
-      );
+      const payload: EmailVerificationPayload = this.jwtService.verify(token);
 
       if (typeof payload === 'object' && 'email' in payload) {
         return payload.email;

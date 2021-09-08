@@ -30,9 +30,8 @@ export class UserService {
   async updatePublicUser(id: number, updateUserDto: UpdatePublicUserDto) {
     let hashedPassword;
     if (updateUserDto.password) {
-      hashedPassword = await bcrypt.hash(
+      hashedPassword = await this.hashPassword(
         updateUserDto.password.toString(),
-        await bcrypt.genSalt(),
       );
     }
 
@@ -57,8 +56,7 @@ export class UserService {
     firstName,
     lastName,
   }: RegisterDto) {
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await this.hashPassword(password);
 
     try {
       const user = await this.prisma.user.create({
@@ -153,6 +151,10 @@ export class UserService {
     if (!(await this.prisma.user.findUnique({ where: user }))) {
       throw new NotFoundException('This user does not exist');
     }
+  }
+
+  async hashPassword(password: string) {
+    return bcrypt.hash(password, await bcrypt.genSalt());
   }
 
   private handleException(error: Error) {

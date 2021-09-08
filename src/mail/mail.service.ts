@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { UserService } from 'src/user/user.service';
 import { ConfigService } from '@nestjs/config';
@@ -12,14 +12,6 @@ export class MailService {
     private readonly configService: ConfigService,
   ) {}
 
-  async sendTestMail() {
-    await this.mailerService.sendMail({
-      to: 'gasper@orb.si',
-      subject: 'Fundl test email',
-      template: './test',
-    });
-  }
-
   async sendConfirmMail(email: string, token: string) {
     const url = this.configService.get('MAIL_CONFIRM_URL');
     if (!url) {
@@ -30,6 +22,23 @@ export class MailService {
       to: user.email,
       subject: 'Potrditev e-poštnega naslova',
       template: './email',
+      context: {
+        name: user.profile.firstName,
+        url: `${url}${token}`,
+      },
+    });
+  }
+
+  async sendForgotPasswordMail(email: string, token: string) {
+    const url = this.configService.get('MAIL_FORGOT_PASSWORD_URL');
+    if (!url) {
+      throw new Error('There was an error sending the forgot password email');
+    }
+    const user = await this.userService.getUser({ email });
+    return this.mailerService.sendMail({
+      to: user.email,
+      subject: 'Ponastavitev gesla',
+      template: './password',
       context: {
         name: user.profile.firstName,
         url: `${url}${token}`,

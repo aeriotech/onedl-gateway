@@ -14,6 +14,7 @@ import { CardValidatorModule } from './card-validator/card-validator.module';
 import { PlanModule } from './plan/plan.module';
 import { EmailConfirmationModule } from './email-confirmation/email-confirmation.module';
 import { StartupService } from './startup/startup.service';
+import { ForgotPasswordModule } from './forgot-password/forgot-password.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { StartupService } from './startup/startup.service';
     CardValidatorModule,
     PlanModule,
     EmailConfirmationModule,
+    ForgotPasswordModule,
   ],
   providers: [StartupService],
 })

@@ -5,6 +5,7 @@ export class PublicUser implements User {
   id: number;
   role: Role;
   plan: Plan;
+  forgotPasswordToken: string;
 
   @Expose()
   username: string;
