@@ -9,11 +9,11 @@ import {
   Put,
   Query,
   UploadedFile,
-  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RoleGuard } from 'src/role/role.guard';
@@ -21,6 +21,7 @@ import { CreateShopDto } from './dtos/create-shop.dto';
 import { UpdateShopDto } from './dtos/update-shop.dto';
 import { ShopService } from './shop.service';
 
+@ApiTags('Shop')
 @Controller('shop')
 export class ShopController {
   constructor(private readonly shopService: ShopService) {}
@@ -29,6 +30,7 @@ export class ShopController {
    * Get public and private shops
    * @returns All shops
    */
+  @ApiBearerAuth('Admin')
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
   @Get()
   getShops(@Query('category') categoryUuid?: string) {
@@ -39,6 +41,8 @@ export class ShopController {
    * Get list of public shops
    * @returns List of public shops
    */
+  @ApiBearerAuth('User')
+  @ApiBearerAuth('Admin')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(CacheInterceptor)
   @Get()
@@ -51,12 +55,15 @@ export class ShopController {
    * @param uuid UUID of shop
    * @returns Shop
    */
+  @ApiBearerAuth('Admin')
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
   @Get(':uuid')
   getShop(@Param('uuid') uuid: string) {
     return this.shopService.getShop({ uuid });
   }
 
+  @ApiBearerAuth('User')
+  @ApiBearerAuth('Admin')
   @UseGuards(JwtAuthGuard)
   @Get(':uuid')
   getPublicShop(@Param('uuid') uuid: string) {
@@ -68,6 +75,7 @@ export class ShopController {
    * @param createShopDto Shop data
    * @returns Created shop
    */
+  @ApiBearerAuth('Admin')
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
   @Post()
   createShop(@Body() createShopDto: CreateShopDto) {
@@ -79,6 +87,7 @@ export class ShopController {
    * @param uuid UUID of shop
    * @returns Deleted shop
    */
+  @ApiBearerAuth('Admin')
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
   @Delete(':uuid')
   deleteShop(@Param('uuid') uuid: string) {
@@ -91,6 +100,7 @@ export class ShopController {
    * @param updateShopDto Shop data
    * @returns Updated shop
    */
+  @ApiBearerAuth('Admin')
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
   @Put(':uuid')
   updateShop(
@@ -100,6 +110,7 @@ export class ShopController {
     return this.shopService.updateShop(uuid, updateShopDto);
   }
 
+  @ApiBearerAuth('Admin')
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
   @UseInterceptors(FileInterceptor('file'))
   @Post('logo/:uuid')
@@ -110,6 +121,7 @@ export class ShopController {
     return this.shopService.updateLogo(uuid, file.buffer, file.originalname);
   }
 
+  @ApiBearerAuth('Admin')
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
   @Delete('logo/:uuid')
   deleteLogo(@Param('uuid') uuid: string) {

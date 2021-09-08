@@ -1,4 +1,4 @@
-class DailyAvailable {
+export class DailyAvailable {
   available: boolean;
   availableAt: string;
 }

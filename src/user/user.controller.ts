@@ -9,6 +9,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RoleGuard } from 'src/role/role.guard';
@@ -20,6 +21,7 @@ import { PublicUser } from './models/public-user.model';
 import { UserId } from './user.decorator';
 import { UserService } from './user.service';
 
+@ApiTags('User')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -29,6 +31,8 @@ export class UserController {
    * @param id Id of the user to find
    * @returns The user
    */
+  @ApiBearerAuth('User')
+  @ApiBearerAuth('Admin')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(PublicFilter(PublicUser))
   @Get('me')
@@ -36,6 +40,7 @@ export class UserController {
     return this.userService.getPublicUser({ id });
   }
 
+  @ApiBearerAuth('Admin')
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
   @UseInterceptors(PublicFilter(PublicUser))
   @Get(':username')
@@ -43,6 +48,7 @@ export class UserController {
     return this.userService.getUser({ username });
   }
 
+  @ApiBearerAuth('Admin')
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
   @Get()
   getUsers() {
@@ -55,6 +61,7 @@ export class UserController {
    * @param updateUserDto Fields to update
    * @returns Updaed user
    */
+  @ApiBearerAuth('Admin')
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
   @Put(':username')
   updateUser(
@@ -69,6 +76,7 @@ export class UserController {
    * @param body User data
    * @returns The newly created user
    */
+  @ApiBearerAuth('User')
   @Post()
   @UseInterceptors(PublicFilter(PublicUser))
   register(@Body() body: RegisterDto) {
@@ -81,6 +89,7 @@ export class UserController {
    * @param updateUserDto Fields to update
    * @returns Updated user
    */
+  @ApiBearerAuth('User')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(PublicFilter(PublicUser))
   @Put()
@@ -93,6 +102,7 @@ export class UserController {
    * @param id Id of user to delete
    * @returns Deleted user
    */
+  @ApiBearerAuth('User')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(PublicFilter(PublicUser))
   @Delete()

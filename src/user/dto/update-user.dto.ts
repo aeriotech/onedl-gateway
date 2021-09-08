@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Plan, Role } from '@prisma/client';
 import { IsBoolean, IsEmail, IsEnum, IsString, Length } from 'class-validator';
 
@@ -13,9 +14,11 @@ export class UpdateUserDto {
   @Length(8)
   password?: string;
 
+  @ApiProperty({ enum: Role })
   @IsEnum(Role)
   role?: Role;
 
+  @ApiProperty({ enum: Plan })
   @IsEnum(Plan)
   plan?: Plan;
 

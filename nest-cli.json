@@ -3,6 +3,15 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "assets": ["**/*.hbs"],
-    "watchAssets": true
+    "watchAssets": true,
+    "plugins": [
+      {
+        "name": "@nestjs/swagger/plugin",
+        "options": {
+          "dtoFileNameSuffix": [".dto.ts"],
+          "classValidatorShim": false
+        }
+      }
+    ]
   }
 }

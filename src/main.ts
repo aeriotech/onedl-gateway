@@ -4,7 +4,11 @@ import { NestFactory } from '@nestjs/core';
 import { config } from 'aws-sdk';
 import { AppModule } from './app.module';
 import * as morgan from 'morgan';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import {
+  DocumentBuilder,
+  SwaggerCustomOptions,
+  SwaggerModule,
+} from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -22,9 +26,15 @@ async function bootstrap() {
     .setTitle('Fundl API')
     .setDescription('The Fundl API documentation')
     .setVersion('1.0')
+    .addBearerAuth({ type: 'http', bearerFormat: 'JWT' }, 'User')
+    .addBearerAuth({ type: 'http', bearerFormat: 'JWT' }, 'Admin')
+
     .build();
+  const customOptions: SwaggerCustomOptions = {
+    customSiteTitle: 'Fundl API Documentation',
+  };
   const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api', app, document, customOptions);
 
   const configService = app.get(ConfigService);
   config.update({

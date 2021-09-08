@@ -6,10 +6,12 @@ import {
   UploadedFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UserId } from 'src/user/user.decorator';
 import { PlanService } from './plan.service';
 
+@ApiTags('Plan')
 @Controller('plan')
 export class PlanController {
   constructor(private readonly planService: PlanService) {}

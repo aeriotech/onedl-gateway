@@ -12,6 +12,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { PublicShop } from 'src/shop/models/public.shop.model';
 import { ShopService } from 'src/shop/shop.service';
 import { UserService } from 'src/user/user.service';
+import { DailyAvailable } from './models/daily.available.model';
 import { DailySelect } from './models/daily.select.model';
 import { DailyShops } from './models/daily.shops.model';
 
