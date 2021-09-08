@@ -13,6 +13,7 @@ import { MailModule } from './mail/mail.module';
 import { CardValidatorModule } from './card-validator/card-validator.module';
 import { PlanModule } from './plan/plan.module';
 import { EmailConfirmationModule } from './email-confirmation/email-confirmation.module';
+import { StartupService } from './startup/startup.service';
 
 @Module({
   imports: [
@@ -33,5 +34,6 @@ import { EmailConfirmationModule } from './email-confirmation/email-confirmation
     PlanModule,
     EmailConfirmationModule,
   ],
+  providers: [StartupService],
 })
 export class AppModule {}

@@ -4,6 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { config } from 'aws-sdk';
 import { AppModule } from './app.module';
 import * as morgan from 'morgan';
+
 import {
   DocumentBuilder,
   SwaggerCustomOptions,
@@ -21,6 +22,8 @@ async function bootstrap() {
 
   app.use(morgan('tiny'));
   app.enableCors();
+
+  app.enableShutdownHooks();
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Fundl API')
