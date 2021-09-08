@@ -42,10 +42,9 @@ export class ForgotPasswordService {
       this.logger.warn(`Token doesn't match saved token`);
       throw new BadRequestException('Invalid token');
     }
-    const hashedPassword = await this.userService.hashPassword(password);
     await this.userService.updateUser(
       { email },
-      { password: hashedPassword, forgotPasswordToken: null },
+      { password, forgotPasswordToken: undefined },
     );
     this.logger.verbose(`Password for ${email} has been updated`);
   }
