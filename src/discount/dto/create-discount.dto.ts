@@ -1,4 +1,3 @@
-import { Shop } from '@prisma/client';
 import { IsInt, IsNotEmpty } from 'class-validator';
 
 export class CreateDiscountDto {

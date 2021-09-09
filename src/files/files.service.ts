@@ -1,5 +1,5 @@
 import { file } from '@babel/types';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Endpoint, S3 } from 'aws-sdk';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -11,6 +11,8 @@ export class FilesService {
     private readonly config: ConfigService,
     private readonly prisma: PrismaService,
   ) {}
+
+  private readonly logger = new Logger('FilesService');
 
   async uploadPrivateFile(dataBuffer: Buffer, filename: string) {
     const s3 = new S3({
@@ -50,6 +52,7 @@ export class FilesService {
   }
 
   async uploadPublicFile(dataBuffer: Buffer, filename: string) {
+    this.logger.verbose(`Uploading ${filename}`);
     const s3 = new S3({
       endpoint: new Endpoint(this.config.get('S3_ENDPOINT')),
     });
@@ -63,12 +66,16 @@ export class FilesService {
       })
       .promise();
 
-    return await this.prisma.publicFile.create({
+    const file = await this.prisma.publicFile.create({
       data: {
         key: uploadResult.Key,
         url: uploadResult.Location,
       },
     });
+    this.logger.verbose(
+      `File ${filename} uploaded to ${uploadResult.Location}`,
+    );
+    return file;
   }
 
   async deletePublicFile(fileId: number) {

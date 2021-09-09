@@ -5,6 +5,7 @@ export class PublicDiscount implements Discount {
   id: number;
   @Expose()
   name: string;
+  description: string;
   max: number;
   parts: number;
   public: boolean;
@@ -13,6 +14,7 @@ export class PublicDiscount implements Discount {
   validTime: number;
   categoryUuid: string;
   thumbnailId: number;
+  imageId: number;
   shopId: number;
   createdAt: Date;
   updatedAt: Date;

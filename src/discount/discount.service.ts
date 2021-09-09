@@ -2,20 +2,24 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import * as dayjs from 'dayjs';
 import { Discount, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateDiscountDto } from './dto/create-discount.dto';
-import { ShopService } from 'src/shop/shop.service';
+import { FilesService } from 'src/files/files.service';
+import { UpdateDiscountImagesDto } from './dto/update-discount-images.dto';
 
 @Injectable()
 export class DiscountService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly shopService: ShopService,
+    private readonly filesService: FilesService,
   ) {}
+
+  private readonly logger = new Logger('DiscountService');
 
   async createDiscount(data: CreateDiscountDto) {
     try {
@@ -34,6 +38,37 @@ export class DiscountService {
         category: true,
       },
     });
+  }
+
+  async updateDiscountImages(
+    where: Prisma.DiscountWhereUniqueInput,
+    files: UpdateDiscountImagesDto,
+  ) {
+    const fileUploadTasks = [];
+    for (const f in files) {
+      fileUploadTasks.push(this.updateImage(where, files[f], f));
+    }
+    await Promise.all(fileUploadTasks);
+  }
+
+  private async updateImage(
+    where: Prisma.DiscountWhereUniqueInput,
+    image: Express.Multer.File,
+    fieldName: string,
+  ) {
+    this.logger.verbose(`Updating ${fieldName} on discount ${where.id}`);
+    const file = await this.filesService.uploadPublicFile(
+      image[0].buffer,
+      image[0].originalname,
+    );
+    const discount = await this.prisma.discount.update({
+      where,
+      data: {
+        [`${fieldName}Id`]: file.id,
+      },
+    });
+    this.logger.verbose(`Updated ${fieldName} on discount ${where.id}`);
+    return discount;
   }
 
   async getRandomDiscount(where: Prisma.DiscountWhereInput) {
@@ -73,7 +108,7 @@ export class DiscountService {
             OR: [
               {
                 validTo: {
-                  equals: now,
+                  lt: now,
                 },
               },
               {
@@ -86,7 +121,6 @@ export class DiscountService {
         ],
       },
     });
-    console.log(discounts);
     return discounts;
   }
 

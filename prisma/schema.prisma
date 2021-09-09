@@ -13,11 +13,11 @@ model User {
   username            String        @unique
   email               String        @unique
   password            String
-  forgotPasswordToken String?       @default("")
+  forgotPasswordToken String?
   plan                Plan          @default(NORMAL)
   profile             Profile?      @relation(fields: [profileId], references: [id])
   profileId           Int?
-  emailConfirmed      Boolean?      @default(false)
+  emailConfirmed      Boolean       @default(false)
   score               Int           @default(0)
   lastDaily           DateTime      @default(now())
   coupons             Coupon[]
@@ -89,12 +89,15 @@ model Discount {
   validFrom    DateTime?
   validTo      DateTime?
   validTime    Int?
-  thumbnail    PublicFile? @relation(fields: [thumbnailId], references: [id])
+  thumbnail    PublicFile? @relation("thumbnail", fields: [thumbnailId], references: [id])
   thumbnailId  Int?
+  image        PublicFile? @relation("image", fields: [imageId], references: [id])
+  imageId      Int?
   category     Category?   @relation(fields: [categoryUuid], references: [uuid])
   categoryUuid String?
   shop         Shop        @relation(fields: [shopId], references: [id])
   shopId       Int
+  description  String      @default("")
   createdAt    DateTime    @default(now())
   updatedAt    DateTime?   @updatedAt
 }
@@ -102,24 +105,26 @@ model Discount {
 model Coupon {
   id         Int       @id @default(autoincrement())
   public     Boolean   @default(false)
+  used       Boolean   @default(false)
   validTo    DateTime?
   discount   Discount  @relation(fields: [discountId], references: [id])
   discountId Int
-  user       User      @relation(fields: [userId], references: [id])
-  userId     Int
+  user       User?     @relation(fields: [userId], references: [id])
+  userId     Int?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime? @updatedAt
 }
 
 model PublicFile {
-  id        Int        @id @default(autoincrement())
-  url       String
-  key       String     @unique
-  Profile   Profile[]
-  Shop      Shop[]
-  Discount  Discount[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime?  @updatedAt
+  id                Int        @id @default(autoincrement())
+  url               String
+  key               String     @unique
+  profile           Profile[]
+  shop              Shop[]
+  discountImage     Discount[] @relation("image")
+  discountThumbnail Discount[] @relation("thumbnail")
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime?  @updatedAt
 }
 
 model PrivateFile {
