@@ -1,3 +1,12 @@
+import { IsBoolean, IsEmpty, IsNotEmpty, IsString } from 'class-validator';
+
 export class UpdateDiscountDto {
-  thumbnail: File;
+  @IsString()
+  name?: string;
+
+  @IsString()
+  description?: string;
+
+  @IsBoolean()
+  public?: boolean;
 }

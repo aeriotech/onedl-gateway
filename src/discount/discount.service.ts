@@ -11,17 +11,21 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateDiscountDto } from './dto/create-discount.dto';
 import { FilesService } from 'src/files/files.service';
 import { UpdateDiscountImagesDto } from './dto/update-discount-images.dto';
+import { UpdateDiscountDto } from './dto/update-discount.dto';
+import { ShopService } from 'src/shop/shop.service';
 
 @Injectable()
 export class DiscountService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly filesService: FilesService,
+    private readonly shopService: ShopService,
   ) {}
 
   private readonly logger = new Logger('DiscountService');
 
   async createDiscount(data: CreateDiscountDto) {
+    await this.shopService.getShop({ id: data.shopId });
     try {
       return await this.prisma.discount.create({ data });
     } catch (e) {
@@ -40,34 +44,31 @@ export class DiscountService {
     });
   }
 
-  async updateDiscountImages(
-    where: Prisma.DiscountWhereUniqueInput,
-    files: UpdateDiscountImagesDto,
-  ) {
+  async updateDiscountImages(id: number, files: UpdateDiscountImagesDto) {
     const fileUploadTasks = [];
     for (const f in files) {
-      fileUploadTasks.push(this.updateImage(where, files[f], f));
+      fileUploadTasks.push(this.updateImage(id, files[f], f));
     }
     await Promise.all(fileUploadTasks);
   }
 
   private async updateImage(
-    where: Prisma.DiscountWhereUniqueInput,
+    id: number,
     image: Express.Multer.File,
     fieldName: string,
   ) {
-    this.logger.verbose(`Updating ${fieldName} on discount ${where.id}`);
+    this.logger.verbose(`Updating ${fieldName} on discount ${id}`);
     const file = await this.filesService.uploadPublicFile(
       image[0].buffer,
       image[0].originalname,
     );
     const discount = await this.prisma.discount.update({
-      where,
+      where: { id },
       data: {
         [`${fieldName}Id`]: file.id,
       },
     });
-    this.logger.verbose(`Updated ${fieldName} on discount ${where.id}`);
+    this.logger.verbose(`Updated ${fieldName} on discount ${id}`);
     return discount;
   }
 
@@ -120,6 +121,18 @@ export class DiscountService {
           },
         ],
       },
+      include: {
+        thumbnail: {
+          select: {
+            url: true,
+          },
+        },
+        image: {
+          select: {
+            url: true,
+          },
+        },
+      },
     });
     return discounts;
   }
@@ -130,6 +143,10 @@ export class DiscountService {
     } catch (e) {
       this.handleException(e);
     }
+  }
+
+  async updateDiscount(id: number, data: UpdateDiscountDto) {
+    return await this.prisma.discount.update({ where: { id }, data });
   }
 
   private async checkDiscount(where: Prisma.DiscountWhereUniqueInput) {
@@ -150,7 +167,7 @@ export class DiscountService {
         case 'P2025':
           throw new NotFoundException('Discount does not exist');
         default:
-          throw new BadRequestException(error.code);
+          throw new BadRequestException();
       }
     }
   }

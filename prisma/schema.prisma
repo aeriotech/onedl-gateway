@@ -82,13 +82,7 @@ model Category {
 model Discount {
   id           Int         @id @default(autoincrement())
   name         String
-  coupons      Coupon[]
-  max          Int?
-  parts        Int         @default(1)
-  public       Boolean     @default(false)
-  validFrom    DateTime?
-  validTo      DateTime?
-  validTime    Int?
+  description  String      @default("")
   thumbnail    PublicFile? @relation("thumbnail", fields: [thumbnailId], references: [id])
   thumbnailId  Int?
   image        PublicFile? @relation("image", fields: [imageId], references: [id])
@@ -97,7 +91,13 @@ model Discount {
   categoryUuid String?
   shop         Shop        @relation(fields: [shopId], references: [id])
   shopId       Int
-  description  String      @default("")
+  coupons      Coupon[]
+  max          Int?
+  parts        Int         @default(1)
+  public       Boolean     @default(false)
+  validFrom    DateTime?
+  validTo      DateTime?
+  validTime    Int?
   createdAt    DateTime    @default(now())
   updatedAt    DateTime?   @updatedAt
 }

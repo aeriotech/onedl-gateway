@@ -5,9 +5,10 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { ShopService } from 'src/shop/shop.service';
 import { FilesService } from 'src/files/files.service';
 import { FilesModule } from 'src/files/files.module';
+import { ShopModule } from 'src/shop/shop.module';
 
 @Module({
-  imports: [FilesModule],
+  imports: [FilesModule, ShopModule],
   providers: [DiscountService, PrismaService, ShopService, FilesService],
   controllers: [DiscountController],
 })

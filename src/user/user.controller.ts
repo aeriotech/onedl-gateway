@@ -12,6 +12,7 @@ import {
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Public } from 'src/auth/public.decorator';
 import { RoleGuard } from 'src/role/role.guard';
 import { PublicFilter } from 'src/utils/filter.interceptor';
 import { RegisterDto } from './dto/register.dto';
@@ -76,8 +77,8 @@ export class UserController {
    * @param body User data
    * @returns The newly created user
    */
-  @ApiBearerAuth('User')
   @Post()
+  @Public()
   @UseInterceptors(PublicFilter(PublicUser))
   register(@Body() body: RegisterDto) {
     return this.userService.createPublicUser(body);
@@ -89,8 +90,8 @@ export class UserController {
    * @param updateUserDto Fields to update
    * @returns Updated user
    */
-  @ApiBearerAuth('User')
-  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('Admin')
+  @UseGuards(RoleGuard(Role.ADMIN))
   @UseInterceptors(PublicFilter(PublicUser))
   @Put()
   update(@UserId() id: number, @Body() updateUserDto: UpdatePublicUserDto) {

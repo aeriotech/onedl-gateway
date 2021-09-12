@@ -15,14 +15,14 @@ export const RoleGuard = (role: Role) => {
 
     async canActivate(context: ExecutionContext) {
       const request = context.switchToHttp().getRequest();
-      const id = request.user.userId;
+      const id = request.user?.userId;
       const user = await this.prisma.user.findUnique({
         where: { id },
       });
       if (!user) {
         throw new UnauthorizedException();
       }
-      return user.role == role;
+      return user.role === role;
     }
   }
 

@@ -15,6 +15,8 @@ import { PlanModule } from './plan/plan.module';
 import { EmailConfirmationModule } from './email-confirmation/email-confirmation.module';
 import { StartupService } from './startup/startup.service';
 import { ForgotPasswordModule } from './forgot-password/forgot-password.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -36,6 +38,12 @@ import { ForgotPasswordModule } from './forgot-password/forgot-password.module';
     EmailConfirmationModule,
     ForgotPasswordModule,
   ],
-  providers: [StartupService],
+  providers: [
+    StartupService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}

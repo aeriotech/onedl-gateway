@@ -1,10 +1,11 @@
-import { Discount } from '.prisma/client';
+import { Discount, PublicFile } from '.prisma/client';
 import { Expose } from 'class-transformer';
 
 export class PublicDiscount implements Discount {
   id: number;
   @Expose()
   name: string;
+  @Expose()
   description: string;
   max: number;
   parts: number;
@@ -14,7 +15,11 @@ export class PublicDiscount implements Discount {
   validTime: number;
   categoryUuid: string;
   thumbnailId: number;
+  @Expose()
+  thumbnail: PublicFile;
   imageId: number;
+  @Expose()
+  image: PublicFile;
   shopId: number;
   createdAt: Date;
   updatedAt: Date;
