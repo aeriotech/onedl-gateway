@@ -47,7 +47,6 @@ export class DiscountController {
   }
 
   @Get()
-  @ApiBearerAuth('Admin')
   @UseGuards(RoleGuard(Role.ADMIN))
   getDiscounts() {
     return this.discountService.getDiscounts();
