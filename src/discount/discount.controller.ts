@@ -21,29 +21,25 @@ import { CreateDiscountDto } from './dto/create-discount.dto';
 import { PublicDiscount } from './models/public-discount.model';
 import { Public } from '../auth/public.decorator';
 import { UpdateDiscountDto } from './dto/update-discount.dto';
+import { UserId } from 'src/user/user.decorator';
 
 @ApiTags('Discount')
 @Controller('discounts')
 export class DiscountController {
   constructor(private readonly discountService: DiscountService) {}
 
-  /**
-   * Get a discount by id
-   * @param id Discount id
-   * @returns Discount
-   */
-  @Get(':id')
-  @ApiBearerAuth('Admin')
-  @UseGuards(RoleGuard(Role.ADMIN))
-  getDiscount(@Param('id') id: number) {
-    return this.discountService.getDiscount({ id });
-  }
-
   @Get()
   @Public()
   @UseInterceptors(PublicFilter(PublicDiscount))
   getPublicDiscounts() {
     return this.discountService.getPublicDiscounts();
+  }
+
+  @Get(':uuid')
+  @Public()
+  @UseInterceptors(PublicFilter(PublicDiscount))
+  getPublicDiscount(@Param('uuid') uuid: string) {
+    return this.discountService.getPublicDiscount(uuid);
   }
 
   @Get()
@@ -128,5 +124,15 @@ export class DiscountController {
   @UseGuards(RoleGuard(Role.ADMIN))
   deleteDiscount(@Param('id') id: number) {
     return this.discountService.deleteDiscount({ id });
+  }
+
+  @Post(':uuid/generate')
+  @ApiBearerAuth('User')
+  @UseInterceptors(PublicFilter(PublicDiscount))
+  generateDiscount(
+    @UserId() userId: number,
+    @Param('uuid') discountUuid: string,
+  ) {
+    return this.discountService.generateCoupon(userId, discountUuid);
   }
 }

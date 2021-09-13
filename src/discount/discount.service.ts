@@ -13,6 +13,7 @@ import { FilesService } from 'src/files/files.service';
 import { UpdateDiscountImagesDto } from './dto/update-discount-images.dto';
 import { UpdateDiscountDto } from './dto/update-discount.dto';
 import { ShopService } from 'src/shop/shop.service';
+import { CouponService } from 'src/coupon/coupon.service';
 
 @Injectable()
 export class DiscountService {
@@ -20,6 +21,7 @@ export class DiscountService {
     private readonly prisma: PrismaService,
     private readonly filesService: FilesService,
     private readonly shopService: ShopService,
+    private readonly couponService: CouponService,
   ) {}
 
   private readonly logger = new Logger('DiscountService');
@@ -137,6 +139,63 @@ export class DiscountService {
     return discounts;
   }
 
+  async getPublicDiscount(uuid: string) {
+    const now = dayjs().toISOString();
+    const discount = await this.prisma.discount.findFirst({
+      where: {
+        uuid,
+        public: true,
+        AND: [
+          {
+            OR: [
+              {
+                validFrom: {
+                  gte: now,
+                },
+              },
+              {
+                validFrom: {
+                  equals: null,
+                },
+              },
+            ],
+          },
+          {
+            OR: [
+              {
+                validTo: {
+                  lt: now,
+                },
+              },
+              {
+                validTo: {
+                  equals: null,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      include: {
+        thumbnail: {
+          select: {
+            url: true,
+          },
+        },
+        image: {
+          select: {
+            url: true,
+          },
+        },
+        coupons: true,
+      },
+    });
+    if (!discount) {
+      throw new NotFoundException('Discount not found');
+    }
+    return discount;
+  }
+
   async deleteDiscount(where: Prisma.DiscountWhereUniqueInput) {
     try {
       return await this.prisma.discount.delete({ where });
@@ -147,6 +206,10 @@ export class DiscountService {
 
   async updateDiscount(id: number, data: UpdateDiscountDto) {
     return await this.prisma.discount.update({ where: { id }, data });
+  }
+
+  async generateCoupon(userId: number, discountUuid: string) {
+    return await this.couponService.linkCoupon(userId, discountUuid);
   }
 
   private async checkDiscount(where: Prisma.DiscountWhereUniqueInput) {

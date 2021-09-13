@@ -106,6 +106,7 @@ export class UserService {
             profilePicture: true,
           },
         },
+        coupons: true,
       },
     });
     return result;

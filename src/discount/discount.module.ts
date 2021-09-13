@@ -6,10 +6,12 @@ import { ShopService } from 'src/shop/shop.service';
 import { FilesService } from 'src/files/files.service';
 import { FilesModule } from 'src/files/files.module';
 import { ShopModule } from 'src/shop/shop.module';
+import { CouponModule } from 'src/coupon/coupon.module';
 
 @Module({
-  imports: [FilesModule, ShopModule],
+  imports: [FilesModule, ShopModule, CouponModule],
   providers: [DiscountService, PrismaService, ShopService, FilesService],
   controllers: [DiscountController],
+  exports: [DiscountService],
 })
 export class DiscountModule {}

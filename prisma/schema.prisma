@@ -80,7 +80,8 @@ model Category {
 }
 
 model Discount {
-  id           Int         @id @default(autoincrement())
+  id           Int         @id @unique @default(autoincrement())
+  uuid         String      @unique @default("")
   name         String
   description  String      @default("")
   thumbnail    PublicFile? @relation("thumbnail", fields: [thumbnailId], references: [id])
@@ -92,6 +93,7 @@ model Discount {
   shop         Shop        @relation(fields: [shopId], references: [id])
   shopId       Int
   coupons      Coupon[]
+  maxPerUser   Int?        @default(1)
   max          Int?
   parts        Int         @default(1)
   public       Boolean     @default(false)
@@ -103,16 +105,17 @@ model Discount {
 }
 
 model Coupon {
-  id         Int       @id @default(autoincrement())
-  public     Boolean   @default(false)
-  used       Boolean   @default(false)
-  validTo    DateTime?
-  discount   Discount  @relation(fields: [discountId], references: [id])
-  discountId Int
-  user       User?     @relation(fields: [userId], references: [id])
-  userId     Int?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime? @updatedAt
+  id           Int       @id @default(autoincrement())
+  code         String
+  public       Boolean   @default(false)
+  used         Boolean   @default(false)
+  validTo      DateTime?
+  discount     Discount  @relation(fields: [discountUuid], references: [uuid])
+  discountUuid String
+  user         User?     @relation(fields: [userId], references: [id])
+  userId       Int?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime? @updatedAt
 }
 
 model PublicFile {
