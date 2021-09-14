@@ -1,6 +1,5 @@
-import { Discount, PublicFile } from '.prisma/client';
+import { CouponType, Discount, PublicFile } from '.prisma/client';
 import { Expose } from 'class-transformer';
-import { PublicCoupon } from 'src/coupon/models/public-coupon.model';
 
 export class PublicDiscount implements Discount {
   id: number;
@@ -10,6 +9,8 @@ export class PublicDiscount implements Discount {
   name: string;
   @Expose()
   description: string;
+  @Expose()
+  couponType: CouponType;
   max: number;
   maxPerUser: number;
   parts: number;

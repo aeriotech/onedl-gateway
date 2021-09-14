@@ -79,6 +79,11 @@ model Category {
   updatedAt DateTime?  @updatedAt
 }
 
+enum CouponType {
+  CODE
+  URL
+}
+
 model Discount {
   id           Int         @id @unique @default(autoincrement())
   uuid         String      @unique @default("")
@@ -93,6 +98,7 @@ model Discount {
   shop         Shop        @relation(fields: [shopId], references: [id])
   shopId       Int
   coupons      Coupon[]
+  couponType   CouponType  @default(CODE)
   maxPerUser   Int?        @default(1)
   max          Int?
   parts        Int         @default(1)

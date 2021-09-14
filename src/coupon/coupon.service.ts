@@ -42,7 +42,14 @@ export class CouponService {
   async getPublicCoupons(userId: number) {
     const coupons = await this.prisma.coupon.findMany({
       where: {
-        userId,
+        OR: [
+          {
+            userId,
+          },
+          {
+            public: true,
+          },
+        ],
       },
     });
     return coupons;
@@ -82,6 +89,7 @@ export class CouponService {
         where: { id: coupon.id },
         data: {
           userId,
+          used: true,
         },
       });
     } catch (e) {
