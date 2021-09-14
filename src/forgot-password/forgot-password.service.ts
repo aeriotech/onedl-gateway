@@ -30,7 +30,10 @@ export class ForgotPasswordService {
         { forgotPasswordToken: token },
       );
     } catch (error) {
-      this.logger.warn(`Email ${email} doesn't exist, skipping mail send`);
+      this.logger.warn(
+        `Email ${email} doesn't exist, skipping mail send`,
+        error,
+      );
     }
   }
 

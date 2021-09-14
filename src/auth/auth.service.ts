@@ -1,4 +1,9 @@
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -16,8 +21,11 @@ export class AuthService {
     const user = await this.userService.findByUsernameOrEmail(username);
     if (user) {
       const valid = await bcrypt.compare(password, user.password);
-      if (valid && user.emailConfirmed) {
+      if (valid) {
         const { password, ...result } = user;
+        if (!user.emailConfirmed) {
+          throw new ForbiddenException(`Email not confirmed`);
+        }
         return result;
       }
     }
