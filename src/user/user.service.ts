@@ -11,12 +11,14 @@ import { UpdatePublicUserDto } from './dto/update-public-user.dto';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { EmailConfirmationService } from 'src/email-confirmation/email-confirmation.service';
+import { SlackService } from 'src/slack/slack.service';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly emailConfirmationService: EmailConfirmationService,
+    private readonly slackeService: SlackService,
   ) {}
 
   async getPublicUser(select: Prisma.UserWhereUniqueInput) {
@@ -74,6 +76,9 @@ export class UserService {
       });
 
       this.emailConfirmationService.sendConfirmationEmail(user);
+
+      await this.slackeService.send(`${firstName} ${lastName} has registered!`);
+      await this.slackeService.reportUserCount();
 
       return user;
     } catch (e) {

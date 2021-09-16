@@ -17,14 +17,12 @@ import { StartupService } from './startup/startup.service';
 import { ForgotPasswordModule } from './forgot-password/forgot-password.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { SlackModule } from './slack/slack.module';
 
 @Module({
   imports: [
     AuthModule,
     UserModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
     ProfileModule,
     DiscountModule,
     ShopModule,
@@ -37,6 +35,10 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
     PlanModule,
     EmailConfirmationModule,
     ForgotPasswordModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    SlackModule,
   ],
   providers: [
     StartupService,
