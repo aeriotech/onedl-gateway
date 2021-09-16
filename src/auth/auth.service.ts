@@ -14,7 +14,6 @@ export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
-    private readonly slackService: SlackService,
   ) {}
 
   async validateUser(authLoginDto: AuthLoginDto) {

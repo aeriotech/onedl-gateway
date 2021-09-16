@@ -28,7 +28,6 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @ApiBearerAuth('Admin')
-  @UseGuards(JwtAuthGuard)
   @UseInterceptors(RoleGuard(Role.ADMIN))
   @Get('me')
   getMe(@UserId() id: number) {
@@ -41,7 +40,6 @@ export class UserController {
    * @returns The user
    */
   @ApiBearerAuth('User')
-  @UseGuards(JwtAuthGuard)
   @UseInterceptors(PublicFilter(PublicUser))
   @Get('me')
   getPublicUser(@UserId() id: number) {

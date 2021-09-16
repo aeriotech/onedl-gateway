@@ -18,6 +18,7 @@ import { ForgotPasswordModule } from './forgot-password/forgot-password.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { SlackModule } from './slack/slack.module';
+import { DiscordModule } from './discord/discord.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { SlackModule } from './slack/slack.module';
       isGlobal: true,
     }),
     SlackModule,
+    DiscordModule,
   ],
   providers: [
     StartupService,

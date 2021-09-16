@@ -5,11 +5,12 @@ import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { EmailConfirmationModule } from 'src/email-confirmation/email-confirmation.module';
 import { SlackModule } from 'src/slack/slack.module';
+import { DiscordModule } from 'src/discord/discord.module';
 
 @Module({
-  imports: [EmailConfirmationModule, SlackModule],
+  imports: [EmailConfirmationModule, SlackModule, DiscordModule],
   providers: [UserService, PrismaService],
   controllers: [UserController],
-  exports: [UserService, EmailConfirmationModule],
+  exports: [UserService, EmailConfirmationModule, DiscordModule],
 })
 export class UserModule {}
