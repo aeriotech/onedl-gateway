@@ -27,13 +27,20 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @ApiBearerAuth('Admin')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(RoleGuard(Role.ADMIN))
+  @Get('me')
+  getMe(@UserId() id: number) {
+    return this.userService.getUser({ id });
+  }
+
   /**
    * Finds a user with id
    * @param id Id of the user to find
    * @returns The user
    */
   @ApiBearerAuth('User')
-  @ApiBearerAuth('Admin')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(PublicFilter(PublicUser))
   @Get('me')
