@@ -12,7 +12,12 @@ export class PublicUser implements User {
 
   @Expose()
   email: string;
+
+  @Expose()
   emailConfirmed: boolean;
+
+  @Expose()
+  ageConfirmed: boolean;
 
   password: string;
 

@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsEmail,
   IsNotEmpty,
   IsPhoneNumber,
@@ -24,4 +25,8 @@ export class RegisterDto {
 
   @IsNotEmpty()
   lastName: string;
+
+  @IsBoolean()
+  @IsNotEmpty()
+  ageConfirmed: boolean;
 }

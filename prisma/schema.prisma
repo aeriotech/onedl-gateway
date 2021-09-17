@@ -18,6 +18,7 @@ model User {
   profile             Profile?      @relation(fields: [profileId], references: [id])
   profileId           Int?
   emailConfirmed      Boolean       @default(false)
+  ageConfirmed        Boolean       @default(false)
   score               Int           @default(0)
   lastDaily           DateTime      @default(now())
   coupons             Coupon[]
@@ -103,6 +104,7 @@ model Discount {
   max          Int?
   parts        Int         @default(1)
   public       Boolean     @default(false)
+  ageLimit     Boolean     @default(false)
   validFrom    DateTime?
   validTo      DateTime?
   validTime    Int?

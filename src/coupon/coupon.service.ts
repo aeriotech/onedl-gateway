@@ -14,6 +14,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { isError } from 'util';
 import { BulkCreateCouponDto } from './dtos/bulk-create-coupon.dto';
+import { AgeLimitException } from './exceptions/age-limit.exception';
+import { CouponLimitException } from './exceptions/coupon-limit.exception';
 import { Coupons } from './models/coupons.model';
 import { PublicCoupon } from './models/public-coupon.model';
 
@@ -65,16 +67,21 @@ export class CouponService {
 
   async linkCoupon(userId: number, discountUuid: string) {
     const user = await this.userService.getUser({ id: userId });
+
     const discount = await this.discountService.getDiscount({
       uuid: discountUuid,
     });
+
+    if (discount.ageLimit && !user.ageConfirmed) {
+      throw new AgeLimitException();
+    }
 
     const currentCoupons = user.coupons.filter(
       (coupon) => coupon.discountUuid === discount.uuid,
     );
 
     if (currentCoupons.length >= discount.maxPerUser) {
-      throw new ForbiddenException(`Can't create more coupons`);
+      throw new CouponLimitException();
     }
 
     try {

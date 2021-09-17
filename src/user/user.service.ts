@@ -59,6 +59,7 @@ export class UserService {
     password,
     firstName,
     lastName,
+    ageConfirmed,
   }: RegisterDto) {
     const hashedPassword = await this.hashPassword(password);
 
@@ -67,6 +68,7 @@ export class UserService {
         data: {
           username,
           email,
+          ageConfirmed,
           password: hashedPassword,
           profile: {
             create: {
