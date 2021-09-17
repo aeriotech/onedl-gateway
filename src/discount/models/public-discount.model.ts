@@ -13,6 +13,7 @@ export class PublicDiscount implements Discount {
   couponType: CouponType;
   max: number;
   maxPerUser: number;
+  ageLimit: boolean;
   parts: number;
   public: boolean;
   validFrom: Date;
