@@ -126,7 +126,11 @@ export class UserService {
 
   async getUsers() {
     return await (
-      await this.prisma.user.findMany()
+      await this.prisma.user.findMany({
+        include: {
+          coupons: true,
+        },
+      })
     ).map((user) => {
       const { password, ...result } = user;
       return result;
