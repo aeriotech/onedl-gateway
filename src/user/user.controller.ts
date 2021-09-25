@@ -9,7 +9,12 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Public } from 'src/auth/public.decorator';
@@ -22,8 +27,8 @@ import { PublicUser } from './models/public-user.model';
 import { UserId } from './user.decorator';
 import { UserService } from './user.service';
 
-@ApiTags('User')
-@Controller('user')
+@ApiTags('Users Endpoint')
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -55,6 +60,12 @@ export class UserController {
   }
 
   @ApiBearerAuth('Admin')
+  @ApiOkResponse({
+    description: 'List of all users',
+    type: PublicUser,
+    isArray: true,
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
   @Get()
   getUsers() {

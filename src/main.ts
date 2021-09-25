@@ -10,6 +10,8 @@ import {
   SwaggerCustomOptions,
   SwaggerModule,
 } from '@nestjs/swagger';
+import { getFromContainer, MetadataStorage } from 'class-validator';
+import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -33,13 +35,29 @@ async function bootstrap() {
     .setVersion('1.0')
     .addBearerAuth({ type: 'http', bearerFormat: 'JWT' }, 'User')
     .addBearerAuth({ type: 'http', bearerFormat: 'JWT' }, 'Admin')
-
     .build();
   const customOptions: SwaggerCustomOptions = {
     customSiteTitle: 'Fundl API Documentation',
+    swaggerOptions: {
+      tagsSorder: 'alpha',
+      operationsSorter: (a, b) => {
+        const methodOrder = ['get', 'post', 'put', 'delete'];
+        const methodA = methodOrder.indexOf(a._root.entries[1][1]);
+        const methodB = methodOrder.indexOf(b._root.entries[1][1]);
+        return methodA - methodB;
+      },
+    },
   };
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api', app, document, customOptions);
+
+  const metadata = (getFromContainer(MetadataStorage) as any)
+    .validationMetadatas;
+  document.components.schemas = Object.assign(
+    {},
+    document.components.schemas || {},
+    validationMetadatasToSchemas(metadata),
+  );
 
   const configService = app.get(ConfigService);
   config.update({

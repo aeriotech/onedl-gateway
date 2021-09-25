@@ -5,6 +5,7 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { Coupon, Prisma } from '@prisma/client';
@@ -27,6 +28,8 @@ export class CouponService {
     private readonly discountService: DiscountService,
     private readonly userService: UserService,
   ) {}
+
+  private readonly logger: Logger = new Logger('CouponService');
 
   async getCoupons(user: Prisma.UserWhereUniqueInput): Promise<Coupons> {
     await this.userService.checkUser(user);
@@ -73,6 +76,9 @@ export class CouponService {
     });
 
     if (discount.ageLimit && !user.ageConfirmed) {
+      this.logger.verbose(
+        `${user.username} tried to link a coupon (${discountUuid}), but didn't have age confirmed`,
+      );
       throw new AgeLimitException();
     }
 
@@ -81,6 +87,9 @@ export class CouponService {
     );
 
     if (currentCoupons.length >= discount.maxPerUser) {
+      this.logger.verbose(
+        `${user.username} tried to link a coupon (${discountUuid}), but the limit was reached`,
+      );
       throw new CouponLimitException();
     }
 
@@ -92,6 +101,7 @@ export class CouponService {
           discountUuid: discount.uuid,
         },
       });
+      this.logger.verbose(`${user.username} linked a coupon (${discountUuid})`);
       return await this.prisma.coupon.update({
         where: { id: coupon.id },
         data: {

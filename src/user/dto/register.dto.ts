@@ -1,11 +1,4 @@
-import {
-  IsBoolean,
-  IsEmail,
-  IsNotEmpty,
-  IsPhoneNumber,
-  Length,
-  NotEquals,
-} from 'class-validator';
+import { IsBoolean, IsEmail, IsNotEmpty, Length } from 'class-validator';
 
 export class RegisterDto {
   @IsNotEmpty()

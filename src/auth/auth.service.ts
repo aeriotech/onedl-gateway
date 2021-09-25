@@ -1,6 +1,7 @@
 import {
   ForbiddenException,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UserService } from '../user/user.service';
@@ -16,6 +17,8 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
+  private readonly logger: Logger = new Logger('AuthService');
+
   async validateUser(authLoginDto: AuthLoginDto) {
     const { username, password } = authLoginDto;
     const user = await this.userService.findByUsernameOrEmail(username);
@@ -24,11 +27,18 @@ export class AuthService {
       if (valid) {
         const { password, ...result } = user;
         if (!user.emailConfirmed) {
+          this.logger.verbose(
+            `${authLoginDto.username} tried to login but didn't have email confirmed`,
+          );
           throw new ForbiddenException(`Email not confirmed`);
         }
+        this.logger.verbose(`${authLoginDto.username} logged in`);
         return result;
       }
     }
+    this.logger.verbose(
+      `${authLoginDto.username} tried to login but didn't provide correct credentials`,
+    );
     throw new UnauthorizedException();
   }
 
