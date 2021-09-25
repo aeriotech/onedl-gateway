@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
@@ -22,6 +23,8 @@ export class UserService {
     private readonly slackeService: SlackService,
     private readonly discordService: DiscordService,
   ) {}
+
+  private readonly logger: Logger = new Logger('UserService');
 
   async getPublicUser(select: Prisma.UserWhereUniqueInput) {
     await this.checkUser(select);
@@ -78,6 +81,10 @@ export class UserService {
           },
         },
       });
+
+      this.logger.verbose(
+        `${firstName} ${lastName} has registered with username ${username}`,
+      );
 
       this.emailConfirmationService.sendConfirmationEmail(user);
 
