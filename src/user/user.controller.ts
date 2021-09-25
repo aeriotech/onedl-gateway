@@ -28,7 +28,7 @@ import { UserId } from './user.decorator';
 import { UserService } from './user.service';
 
 @ApiTags('Users Endpoint')
-@Controller('users')
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
