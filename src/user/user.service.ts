@@ -190,9 +190,9 @@ export class UserService {
             `User with this ${conflictingField} already exists`,
           );
         default:
+          this.logger.error(error);
           throw new BadRequestException(error.code);
       }
-      throw error;
     }
   }
 }
