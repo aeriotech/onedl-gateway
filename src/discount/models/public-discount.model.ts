@@ -1,5 +1,6 @@
 import { CouponType, Discount, PublicFile } from '.prisma/client';
 import { Expose } from 'class-transformer';
+import { PublicShop } from 'src/shop/models/public.shop.model';
 
 export class PublicDiscount implements Discount {
   id: number;
@@ -27,6 +28,8 @@ export class PublicDiscount implements Discount {
   @Expose()
   image: PublicFile;
   shopId: number;
+  @Expose()
+  shop: PublicShop;
   createdAt: Date;
   updatedAt: Date;
 }
