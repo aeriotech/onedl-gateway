@@ -22,6 +22,7 @@ import { PublicDiscount } from './models/public-discount.model';
 import { Public } from '../auth/public.decorator';
 import { UpdateDiscountDto } from './dto/update-discount.dto';
 import { UserId } from 'src/user/user.decorator';
+import { CouponState } from './models/coupon-state.model';
 
 @ApiTags('Discount')
 @Controller('discounts')
@@ -46,6 +47,13 @@ export class DiscountController {
   @UseGuards(RoleGuard(Role.ADMIN))
   getDiscounts() {
     return this.discountService.getDiscounts();
+  }
+
+  @Get(':uuid/count')
+  @Public()
+  @UseInterceptors(PublicFilter(CouponState))
+  getCouponState(@Param('uuid') uuid: string) {
+    return this.discountService.getCouponState(uuid);
   }
 
   /**
