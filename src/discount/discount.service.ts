@@ -108,7 +108,7 @@ export class DiscountService {
         discount: {
           public: true,
         },
-        userId: { not: null },
+        user: { isNot: null },
       },
     });
     return {
@@ -222,6 +222,15 @@ export class DiscountService {
           },
         },
         coupons: true,
+        shop: {
+          select: {
+            logo: {
+              select: {
+                url: true,
+              },
+            },
+          },
+        },
       },
     });
     if (!discount) {
