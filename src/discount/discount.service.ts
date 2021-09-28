@@ -14,6 +14,7 @@ import { UpdateDiscountImagesDto } from './dto/update-discount-images.dto';
 import { UpdateDiscountDto } from './dto/update-discount.dto';
 import { ShopService } from 'src/shop/shop.service';
 import { CouponService } from 'src/coupon/coupon.service';
+import { CouponState } from './models/coupon-state.model';
 
 @Injectable()
 export class DiscountService {
@@ -43,6 +44,13 @@ export class DiscountService {
         shop: true,
         category: true,
       },
+    });
+  }
+
+  getDiscountWithCouponsByUuid(uuid: string) {
+    return this.prisma.discount.findUnique({
+      where: { uuid },
+      include: { coupons: true },
     });
   }
 
@@ -82,6 +90,32 @@ export class DiscountService {
 
   async getDiscounts() {
     return this.prisma.discount.findMany();
+  }
+
+  async getCouponState(uuid: string): Promise<CouponState> {
+    const free = await this.prisma.coupon.count({
+      where: {
+        discountUuid: uuid,
+        discount: {
+          public: true,
+        },
+        user: undefined,
+      },
+    });
+    const used = await this.prisma.coupon.count({
+      where: {
+        discountUuid: uuid,
+        discount: {
+          public: true,
+        },
+        userId: { not: null },
+      },
+    });
+    return {
+      all: free + used,
+      free,
+      used,
+    };
   }
 
   async getPublicDiscounts(
