@@ -19,6 +19,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { SlackModule } from './slack/slack.module';
 import { DiscordModule } from './discord/discord.module';
+import { AgeConfirmationModule } from './age-confirmation/age-confirmation.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { DiscordModule } from './discord/discord.module';
     }),
     SlackModule,
     DiscordModule,
+    AgeConfirmationModule,
   ],
   providers: [
     StartupService,
