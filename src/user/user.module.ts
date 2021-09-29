@@ -6,7 +6,6 @@ import { UserController } from './user.controller';
 import { EmailConfirmationModule } from 'src/email-confirmation/email-confirmation.module';
 import { SlackModule } from 'src/slack/slack.module';
 import { DiscordModule } from 'src/discord/discord.module';
-
 @Module({
   imports: [EmailConfirmationModule, SlackModule, DiscordModule],
   providers: [UserService, PrismaService],

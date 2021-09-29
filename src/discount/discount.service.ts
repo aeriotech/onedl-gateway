@@ -252,7 +252,7 @@ export class DiscountService {
   }
 
   async generateCoupon(userId: number, discountUuid: string) {
-    return await this.couponService.linkCoupon(userId, discountUuid);
+    return this.couponService.linkCoupon(userId, discountUuid);
   }
 
   private async checkDiscount(where: Prisma.DiscountWhereUniqueInput) {

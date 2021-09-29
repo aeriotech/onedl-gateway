@@ -33,7 +33,7 @@ export class UpdateUserDto {
   emailConfirmed?: boolean;
 
   @IsBoolean()
-  phoneConfirmed?: boolean;
+  ageConfirmed?: boolean;
 
   @IsJWT()
   forgotPasswordToken?: string;

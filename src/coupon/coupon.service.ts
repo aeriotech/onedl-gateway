@@ -102,13 +102,15 @@ export class CouponService {
         },
       });
       this.logger.verbose(`${user.username} linked a coupon (${discountUuid})`);
-      return await this.prisma.coupon.update({
+
+      const updated = await this.prisma.coupon.update({
         where: { id: coupon.id },
         data: {
           userId,
           used: true,
         },
       });
+      return updated;
     } catch (e) {
       this.handleException(e);
     }

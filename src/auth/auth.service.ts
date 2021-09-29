@@ -8,7 +8,6 @@ import { UserService } from '../user/user.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { AuthLoginDto } from './dto/auth-login.dto';
-import { SlackService } from 'src/slack/slack.service';
 
 @Injectable()
 export class AuthService {
