@@ -1,7 +1,8 @@
-import { HttpService, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
 import { CardValidatorResponse } from './models/card-validator.response.model';
 import * as FormData from 'form-data';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class CardValidatorService {

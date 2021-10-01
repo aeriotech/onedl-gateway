@@ -1,6 +1,5 @@
 import {
   Body,
-  CacheInterceptor,
   Controller,
   Delete,
   Get,
@@ -44,7 +43,6 @@ export class ShopController {
   @ApiBearerAuth('User')
   @ApiBearerAuth('Admin')
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(CacheInterceptor)
   @Get()
   getPublicShops(@Query('category') categoryUuid?: string) {
     return this.shopService.getPublicShops({ categoryUuid });

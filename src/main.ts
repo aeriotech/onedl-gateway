@@ -36,6 +36,7 @@ async function bootstrap() {
     .addBearerAuth({ type: 'http', bearerFormat: 'JWT' }, 'User')
     .addBearerAuth({ type: 'http', bearerFormat: 'JWT' }, 'Admin')
     .build();
+
   const customOptions: SwaggerCustomOptions = {
     customSiteTitle: 'Fundl API Documentation',
     swaggerOptions: {
@@ -48,6 +49,7 @@ async function bootstrap() {
       },
     },
   };
+
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api', app, document, customOptions);
 
