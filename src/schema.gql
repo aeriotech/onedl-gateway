@@ -21,6 +21,7 @@ type Profile {
   lastName: String!
   bio: String!
   profilePicture: PublicFile
+  user: User
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -97,6 +98,7 @@ type Coupon {
 type Query {
   users: [User!]
   user(where: UserUniqueInput!): User
+  me: User
   profiles: [Profile!]
   profile(where: ProfileUniqueInput!): Profile
   discounts: [Discount!]!
@@ -126,6 +128,7 @@ input CouponUniqueInput {
 
 type Mutation {
   updateUser(data: UpdateUserDto!, where: UserUniqueInput!): User!
+  deleteUser(where: UserUniqueInput!): User!
 }
 
 input UpdateUserDto {

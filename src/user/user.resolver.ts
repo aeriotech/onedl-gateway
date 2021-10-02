@@ -14,8 +14,10 @@ import {
 import { IsEmail, IsInt, IsString } from 'class-validator';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RoleGuard } from 'src/role/role.guard';
+import handlePrismaError from 'src/utils/prisma-error-handler';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './models/user.model';
+import { UserId } from './user.decorator';
 
 @InputType()
 class UserUniqueInput {
@@ -48,7 +50,7 @@ export class UserResolver {
   @UseGuards(RoleGuard(Role.ADMIN))
   @Query((returns) => [User], { nullable: true })
   async users() {
-    return this.prisma.user.findMany();
+    return await this.prisma.user.findMany();
   }
 
   @UseGuards(RoleGuard(Role.ADMIN))
@@ -57,8 +59,18 @@ export class UserResolver {
     @Args('where', { type: () => UserUniqueInput })
     userUniqueInput: UserUniqueInput,
   ) {
-    return this.prisma.user.findUnique({
+    return await this.prisma.user.findUnique({
       where: userUniqueInput,
+    });
+  }
+
+  @UseGuards(RoleGuard(Role.ADMIN))
+  @Query((returns) => User, { nullable: true })
+  async me(@UserId() id: number) {
+    return await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
     });
   }
 
@@ -70,9 +82,28 @@ export class UserResolver {
     @Args('data', { type: () => UpdateUserDto })
     updateUserDto: UpdateUserDto,
   ) {
-    return this.prisma.user.update({
-      where: userUniqueInput,
-      data: updateUserDto,
-    });
+    try {
+      return await this.prisma.user.update({
+        where: userUniqueInput,
+        data: updateUserDto,
+      });
+    } catch (e) {
+      handlePrismaError(e, 'User');
+    }
+  }
+
+  @UseGuards(RoleGuard(Role.ADMIN))
+  @Mutation((returns) => User)
+  async deleteUser(
+    @Args('where', { type: () => UserUniqueInput })
+    userUniqueInput: UserUniqueInput,
+  ) {
+    try {
+      return await this.prisma.user.delete({
+        where: userUniqueInput,
+      });
+    } catch (e) {
+      handlePrismaError(e, 'User');
+    }
   }
 }
