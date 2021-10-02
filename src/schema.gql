@@ -2,11 +2,10 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Profile {
+type PublicFile {
   id: Int!
-  firstName: String!
-  lastName: String!
-  bio: String!
+  url: String!
+  key: String!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -15,6 +14,16 @@ type Profile {
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type Profile {
+  id: Int!
+  firstName: String!
+  lastName: String!
+  bio: String!
+  profilePicture: PublicFile
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
 
 type User {
   id: Int!
@@ -33,14 +42,6 @@ type User {
 enum Role {
   USER
   ADMIN
-}
-
-type PublicFile {
-  id: Int!
-  url: String!
-  key: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
 type Shop {
@@ -96,6 +97,8 @@ type Coupon {
 type Query {
   users: [User!]
   user(where: UserUniqueInput!): User
+  profiles: [Profile!]
+  profile(where: ProfileUniqueInput!): Profile
   discounts: [Discount!]!
   discount(where: DiscountUniqueInput!): Discount
   coupons: [Coupon!]!
@@ -106,6 +109,10 @@ input UserUniqueInput {
   id: Int
   username: String
   email: String
+}
+
+input ProfileUniqueInput {
+  id: Int!
 }
 
 input DiscountUniqueInput {
