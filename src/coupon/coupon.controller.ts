@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
+import { ApplyUser } from 'src/auth/apply-user.guard';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Public } from 'src/auth/public.decorator';
 import { RoleGuard } from 'src/role/role.guard';
@@ -23,11 +24,12 @@ import { PublicCoupon } from './models/public-coupon.model';
 export class CouponController {
   constructor(private readonly couponService: CouponService) {}
 
+  @Get()
   @ApiBearerAuth('User')
   @ApiBearerAuth('Admin')
   @UseInterceptors(PublicFilter(PublicCoupon))
+  @UseGuards(ApplyUser)
   @Public()
-  @Get()
   getCoupons(@UserId() userId: number) {
     return this.couponService.getPublicCoupons(userId);
   }
