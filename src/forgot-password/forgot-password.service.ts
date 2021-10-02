@@ -25,10 +25,7 @@ export class ForgotPasswordService {
     try {
       await this.mailService.sendForgotPasswordMail(email, token);
       this.logger.verbose(`Forgot password email sent to ${email}`);
-      await this.userService.updateUser(
-        { email },
-        { forgotPasswordToken: token },
-      );
+      await this.userService.update({ email }, { forgotPasswordToken: token });
     } catch (error) {
       this.logger.warn(
         `Email ${email} doesn't exist, skipping mail send`,
@@ -39,13 +36,13 @@ export class ForgotPasswordService {
 
   async resetPassword(token: string, password: string) {
     const email = this.decodeToken(token);
-    const user = await this.userService.getUser({ email });
+    const user = await this.userService.find({ email });
     this.logger.verbose(`Reset password for ${email}`);
     if (user.forgotPasswordToken !== token) {
       this.logger.warn(`Token doesn't match saved token`);
       throw new BadRequestException('Invalid token');
     }
-    await this.userService.updateUser(
+    await this.userService.update(
       { email },
       { password, forgotPasswordToken: undefined },
     );

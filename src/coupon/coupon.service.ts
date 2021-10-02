@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   ConflictException,
-  ForbiddenException,
   forwardRef,
   Inject,
   Injectable,
@@ -13,7 +12,6 @@ import * as dayjs from 'dayjs';
 import { DiscountService } from 'src/discount/discount.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
-import { isError } from 'util';
 import { BulkCreateCouponDto } from './dtos/bulk-create-coupon.dto';
 import { AgeLimitException } from './exceptions/age-limit.exception';
 import { CouponLimitException } from './exceptions/coupon-limit.exception';
@@ -32,7 +30,7 @@ export class CouponService {
   private readonly logger: Logger = new Logger('CouponService');
 
   async getCoupons(user: Prisma.UserWhereUniqueInput): Promise<Coupons> {
-    await this.userService.checkUser(user);
+    await this.userService.check(user);
     const coupons = (await this.prisma.coupon.findMany({
       where: {
         user,
@@ -69,7 +67,7 @@ export class CouponService {
   }
 
   async linkCoupon(userId: number, discountUuid: string) {
-    const user = await this.userService.getUser({ id: userId });
+    const user = await this.userService.find({ id: userId });
 
     const discount = await this.discountService.getDiscount({
       uuid: discountUuid,

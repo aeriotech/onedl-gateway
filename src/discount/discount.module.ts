@@ -7,10 +7,11 @@ import { FilesService } from 'src/files/files.service';
 import { FilesModule } from 'src/files/files.module';
 import { ShopModule } from 'src/shop/shop.module';
 import { CouponModule } from 'src/coupon/coupon.module';
+import { DiscountResolver } from './discount.resolver';
 
 @Module({
   imports: [FilesModule, ShopModule, CouponModule],
-  providers: [DiscountService, PrismaService, ShopService, FilesService],
+  providers: [DiscountService, PrismaService, ShopService, FilesService, DiscountResolver],
   controllers: [DiscountController],
   exports: [DiscountService],
 })

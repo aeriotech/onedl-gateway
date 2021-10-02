@@ -26,7 +26,7 @@ export class ProfileService {
   };
 
   async getPublicProfile(id: number) {
-    const { profileId } = await this.userService.getUser({ id });
+    const { profileId } = await this.userService.find({ id });
     return this.prisma.profile.findUnique({
       where: { id: profileId },
       select: this.public,
@@ -34,7 +34,7 @@ export class ProfileService {
   }
 
   async updatePublicProfile(id: number, profileUpdateDto: ProfileUpdateDto) {
-    const { profileId } = await this.userService.getUser({ id });
+    const { profileId } = await this.userService.find({ id });
     return this.prisma.profile.update({
       where: { id: profileId },
       data: profileUpdateDto,
@@ -43,7 +43,7 @@ export class ProfileService {
   }
 
   async updateProfilePicture(id: number, buffer: Buffer, filename: string) {
-    const { profileId } = await this.userService.getUser({ id });
+    const { profileId } = await this.userService.find({ id });
     const file = await this.filesService.uploadPublicFile(buffer, filename);
     return this.prisma.profile.update({
       where: { id: profileId },
@@ -55,7 +55,7 @@ export class ProfileService {
   }
 
   async deleteProfilePicture(id: number) {
-    const { profileId } = await this.userService.getUser({ id });
+    const { profileId } = await this.userService.find({ id });
     const profile = await this.prisma.profile.findUnique({
       where: { id: profileId },
     });

@@ -17,7 +17,7 @@ export class MailService {
     if (!url) {
       throw new Error('There was an error sending the confirmation email');
     }
-    const user = await this.userService.getUser({ email });
+    const user = await this.userService.find({ email });
     return this.mailerService.sendMail({
       to: user.email,
       subject: 'Potrditev e-poštnega naslova',
@@ -34,7 +34,7 @@ export class MailService {
     if (!url) {
       throw new Error('There was an error sending the forgot password email');
     }
-    const user = await this.userService.getUser({ email });
+    const user = await this.userService.find({ email });
     return this.mailerService.sendMail({
       to: user.email,
       subject: 'Ponastavitev gesla',

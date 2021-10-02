@@ -34,12 +34,12 @@ export class EmailConfirmationService {
   async confirmEmail({ token }: ConfirmEmailDto) {
     const email = this.decodeConfirmationToken(token);
     this.logger.verbose(`Confirming email ${email}`);
-    const user = await this.userService.getUser({ email });
+    const user = await this.userService.find({ email });
     if (user.emailConfirmed) {
       this.logger.verbose(`Email ${email} already confirmed`);
       throw new BadRequestException('Email already confirmed');
     }
-    await this.userService.updateUser({ email }, { emailConfirmed: true });
+    await this.userService.update({ email }, { emailConfirmed: true });
     this.logger.verbose(`Email ${email} confirmed`);
   }
 

@@ -1,0 +1,168 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type PublicFile {
+  id: Int!
+  url: String!
+  key: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Profile {
+  id: Int!
+  firstName: String!
+  lastName: String!
+  bio: String!
+  profilePicture: PublicFile
+  user: User
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type User {
+  id: Int!
+  role: Role!
+  username: String!
+  email: String!
+  plan: String!
+  profile: Profile!
+  emailConfirmed: Boolean!
+  ageConfirmed: Boolean!
+  score: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime
+}
+
+enum Role {
+  USER
+  EDITOR
+  ADMIN
+}
+
+type Shop {
+  id: Int!
+  uuid: String!
+  name: String!
+  logo: PublicFile
+  public: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Discount {
+  id: Int!
+  uuid: String!
+  name: String!
+  description: String!
+  thumbnail: PublicFile!
+  image: PublicFile!
+  categoryUuid: String!
+  shop: Shop!
+  couponType: CouponType!
+  maxPerUser: Int
+  max: Int
+  parts: Int!
+  public: Boolean!
+  ageLimit: Boolean!
+  validFrom: DateTime
+  validTo: DateTime
+  validTime: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime
+}
+
+enum CouponType {
+  CODE
+  URL
+}
+
+type Coupon {
+  id: Int!
+  code: String!
+  public: Boolean!
+  used: Boolean!
+  validTo: DateTime!
+  discount: Discount!
+  discountUuid: String!
+  user: User
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Post {
+  id: Int!
+  url: String!
+  imageId: Int!
+  image: PublicFile!
+  public: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime
+}
+
+type Query {
+  users: [User!]
+  user(where: UserUniqueInput!): User
+  me: User
+  profiles: [Profile!]
+  profile(where: ProfileUniqueInput!): Profile
+  discounts: [Discount!]!
+  discount(where: DiscountUniqueInput!): Discount
+  coupons: [Coupon!]!
+  coupon(where: CouponUniqueInput!): Coupon!
+  posts: [Post!]
+  post(where: PostUniqueInput!): Post
+}
+
+input UserUniqueInput {
+  id: Int
+  username: String
+  email: String
+}
+
+input ProfileUniqueInput {
+  id: Int!
+}
+
+input DiscountUniqueInput {
+  id: Int
+  uuid: String
+}
+
+input CouponUniqueInput {
+  id: Int
+}
+
+input PostUniqueInput {
+  id: Int!
+}
+
+type Mutation {
+  updateUser(data: UpdateUserDto!, where: UserUniqueInput!): User!
+  deleteUser(where: UserUniqueInput!): User!
+  createPost(data: UpdatePostDto!): Post!
+  updatePost(data: UpdatePostDto!, where: PostUniqueInput!): Post!
+  deletePost(where: PostUniqueInput!): Post!
+}
+
+input UpdateUserDto {
+  username: String
+  email: String
+  password: String
+  role: String
+  plan: String
+  emailConfirmed: Boolean
+  ageConfirmed: Boolean
+  forgotPasswordToken: String
+}
+
+input UpdatePostDto {
+  url: String!
+  imageId: Int!
+}

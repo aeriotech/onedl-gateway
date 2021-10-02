@@ -32,7 +32,7 @@ export class DailyService {
   private readonly displayAmount = 4;
 
   async checkAvailability(userId: number): Promise<DailyAvailable> {
-    const user = await this.userService.getUser({ id: userId });
+    const user = await this.userService.find({ id: userId });
 
     const lastDaily = dayjs(user.lastDaily);
     const nextDaily = lastDaily.add(this.dailyDuration, 'hour');

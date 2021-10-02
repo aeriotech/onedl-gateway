@@ -6,7 +6,7 @@ export class AgeConfirmationService {
   constructor(private readonly userService: UserService) {}
 
   async confirmEMSO(userId: number, emso: string) {
-    this.userService.updateUser(
+    this.userService.update(
       { id: userId },
       {
         ageConfirmed: true,

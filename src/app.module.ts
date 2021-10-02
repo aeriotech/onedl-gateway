@@ -20,6 +20,9 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { SlackModule } from './slack/slack.module';
 import { DiscordModule } from './discord/discord.module';
 import { AgeConfirmationModule } from './age-confirmation/age-confirmation.module';
+import { join } from 'path';
+import { GraphQLModule } from '@nestjs/graphql';
+import { PostModule } from './post/post.module';
 
 @Module({
   imports: [
@@ -37,12 +40,17 @@ import { AgeConfirmationModule } from './age-confirmation/age-confirmation.modul
     PlanModule,
     EmailConfirmationModule,
     ForgotPasswordModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
     SlackModule,
     DiscordModule,
     AgeConfirmationModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    GraphQLModule.forRoot({
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      context: ({ req }) => ({ req }),
+    }),
+    PostModule,
   ],
   providers: [
     StartupService,

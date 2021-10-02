@@ -22,8 +22,8 @@ import { PublicDiscount } from './models/public-discount.model';
 import { Public } from '../auth/public.decorator';
 import { UpdateDiscountDto } from './dto/update-discount.dto';
 import { UserId } from 'src/user/user.decorator';
-import { CouponState } from './models/coupon-state.model';
 import { PublicCoupon } from 'src/coupon/models/public-coupon.model';
+import { CouponState } from './models/coupon-state.model';
 
 @ApiTags('Discount')
 @Controller('discounts')

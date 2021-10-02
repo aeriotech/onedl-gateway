@@ -32,8 +32,8 @@ export class PlanService {
       throw new ForbiddenException('This card is not valid');
     }
 
-    await this.userService.updateUser({ id: userId }, { plan: Plan.STUDENT });
+    await this.userService.update({ id: userId }, { plan: Plan.STUDENT });
 
-    return this.userService.getPublicUser({ id: userId });
+    return this.userService.findPublic({ id: userId });
   }
 }
