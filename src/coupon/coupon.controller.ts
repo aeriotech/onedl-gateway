@@ -23,19 +23,19 @@ import { PublicCoupon } from './models/public-coupon.model';
 export class CouponController {
   constructor(private readonly couponService: CouponService) {}
 
-  @Public()
-  @UseInterceptors(PublicFilter(PublicCoupon))
-  @Get()
-  getPublicCoupons() {
-    return this.couponService.getPublicCoupons();
-  }
-
   @ApiBearerAuth('User')
   @ApiBearerAuth('Admin')
   @UseInterceptors(PublicFilter(PublicCoupon))
   @Get()
   getCoupons(@UserId() userId: number) {
     return this.couponService.getPublicCoupons(userId);
+  }
+
+  @Public()
+  @UseInterceptors(PublicFilter(PublicCoupon))
+  @Get()
+  getPublicCoupons() {
+    return this.couponService.getPublicCoupons();
   }
 
   @ApiBearerAuth('Admin')
