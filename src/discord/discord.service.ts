@@ -45,7 +45,7 @@ export class DiscordService {
   async logUserEmbed(userId: number) {
     if (!this.ready) return;
 
-    const user = await this.userService.getUser({ id: userId });
+    const user = await this.userService.find({ id: userId });
     const channel = await this.fetchLogChannel();
     const embed = new MessageEmbed()
       .addField('Username', user.username, true)

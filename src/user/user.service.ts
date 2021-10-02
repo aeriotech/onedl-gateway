@@ -26,15 +26,15 @@ export class UserService {
 
   private readonly logger: Logger = new Logger('UserService');
 
-  async getPublicUser(select: Prisma.UserWhereUniqueInput) {
-    await this.checkUser(select);
+  async findPublic(select: Prisma.UserWhereUniqueInput) {
+    await this.check(select);
     const user = await this.prisma.user.findUnique({
       where: select,
     });
     return user;
   }
 
-  async updatePublicUser(id: number, updateUserDto: UpdatePublicUserDto) {
+  async updatePublic(id: number, updateUserDto: UpdatePublicUserDto) {
     let hashedPassword;
     if (updateUserDto.password) {
       hashedPassword = await this.hashPassword(
@@ -56,7 +56,7 @@ export class UserService {
     }
   }
 
-  async createPublicUser({
+  async createPublic({
     username,
     email,
     password,
@@ -115,8 +115,8 @@ export class UserService {
     });
   }
 
-  async getUser(user: Prisma.UserWhereUniqueInput) {
-    await this.checkUser(user);
+  async find(user: Prisma.UserWhereUniqueInput) {
+    await this.check(user);
     const { password, ...result } = await this.prisma.user.findUnique({
       where: user,
       include: {
@@ -131,24 +131,11 @@ export class UserService {
     return result;
   }
 
-  async getUsers() {
-    return await (
-      await this.prisma.user.findMany({
-        include: {
-          coupons: true,
-        },
-      })
-    ).map((user) => {
-      const { password, ...result } = user;
-      return result;
-    });
-  }
-
-  async updateUser(
+  async update(
     user: Prisma.UserWhereUniqueInput,
     updateUserDto: UpdateUserDto,
   ) {
-    await this.checkUser(user);
+    await this.check(user);
     let hashedPassword;
     if (updateUserDto.password) {
       const salt = await bcrypt.genSalt();
@@ -164,14 +151,14 @@ export class UserService {
     return result;
   }
 
-  async deleteUser(id: number) {
-    await this.checkUser({ id });
+  async delete(id: number) {
+    await this.check({ id });
     return this.prisma.user.delete({
       where: { id },
     });
   }
 
-  async checkUser(user: Prisma.UserWhereUniqueInput) {
+  async check(user: Prisma.UserWhereUniqueInput) {
     if (!(await this.prisma.user.findUnique({ where: user }))) {
       throw new NotFoundException('This user does not exist');
     }

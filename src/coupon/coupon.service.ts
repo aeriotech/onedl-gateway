@@ -30,7 +30,7 @@ export class CouponService {
   private readonly logger: Logger = new Logger('CouponService');
 
   async getCoupons(user: Prisma.UserWhereUniqueInput): Promise<Coupons> {
-    await this.userService.checkUser(user);
+    await this.userService.check(user);
     const coupons = (await this.prisma.coupon.findMany({
       where: {
         user,
@@ -67,7 +67,7 @@ export class CouponService {
   }
 
   async linkCoupon(userId: number, discountUuid: string) {
-    const user = await this.userService.getUser({ id: userId });
+    const user = await this.userService.find({ id: userId });
 
     const discount = await this.discountService.getDiscount({
       uuid: discountUuid,
