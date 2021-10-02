@@ -16,7 +16,9 @@ export const RoleGuard = (role: Role) => {
 
     async canActivate(context: ExecutionContext) {
       const request = context.switchToHttp().getRequest();
-      const id = request.user?.userId;
+      const id =
+        request?.user?.userId ??
+        this.getGraphQLContext(context).req.user.userId;
       const user = await this.prisma.user.findUnique({
         where: { id },
       });
@@ -24,6 +26,10 @@ export const RoleGuard = (role: Role) => {
         throw new UnauthorizedException();
       }
       return user.role === role;
+    }
+
+    getGraphQLContext(context: ExecutionContext) {
+      return GqlExecutionContext.create(context).getContext();
     }
   }
 

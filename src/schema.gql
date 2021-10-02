@@ -35,15 +35,86 @@ enum Role {
   ADMIN
 }
 
+type PublicFile {
+  id: Int!
+  url: String!
+  key: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Shop {
+  id: Int!
+  uuid: String!
+  name: String!
+  logo: PublicFile
+  public: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Discount {
+  id: Int!
+  uuid: String!
+  name: String!
+  description: String!
+  thumbnail: PublicFile!
+  image: PublicFile!
+  categoryUuid: String!
+  shop: Shop!
+  couponType: CouponType!
+  maxPerUser: Int
+  max: Int
+  parts: Int!
+  public: Boolean!
+  ageLimit: Boolean!
+  validFrom: DateTime
+  validTo: DateTime
+  validTime: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime
+}
+
+enum CouponType {
+  CODE
+  URL
+}
+
+type Coupon {
+  id: Int!
+  code: String!
+  public: Boolean!
+  used: Boolean!
+  validTo: DateTime!
+  discount: Discount!
+  discountUuid: String!
+  user: User!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type Query {
   users: [User!]
   user(where: UserUniqueInput!): User
+  discounts: [Discount!]!
+  discount(where: DiscountUniqueInput!): Discount
+  coupons: [Coupon!]!
+  coupon(where: CouponUniqueInput!): Coupon!
 }
 
 input UserUniqueInput {
   id: Int
   username: String
   email: String
+}
+
+input DiscountUniqueInput {
+  id: Int
+  uuid: String
+}
+
+input CouponUniqueInput {
+  id: Int
 }
 
 type Mutation {

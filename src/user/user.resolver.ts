@@ -1,4 +1,5 @@
-import { NotFoundException } from '@nestjs/common';
+import { Role } from '.prisma/client';
+import { UseGuards } from '@nestjs/common';
 import {
   Args,
   Field,
@@ -12,6 +13,7 @@ import {
 } from '@nestjs/graphql';
 import { IsEmail, IsInt, IsString } from 'class-validator';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { RoleGuard } from 'src/role/role.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './models/user.model';
 
@@ -30,7 +32,7 @@ class UserUniqueInput {
   email: string;
 }
 
-@Resolver((of) => User)
+@Resolver(User)
 export class UserResolver {
   constructor(private readonly prisma: PrismaService) {}
 
@@ -43,11 +45,13 @@ export class UserResolver {
       .profile();
   }
 
+  @UseGuards(RoleGuard(Role.ADMIN))
   @Query((returns) => [User], { nullable: true })
   async users() {
     return this.prisma.user.findMany();
   }
 
+  @UseGuards(RoleGuard(Role.ADMIN))
   @Query((returns) => User, { nullable: true })
   async user(
     @Args('where', { type: () => UserUniqueInput })
@@ -58,6 +62,7 @@ export class UserResolver {
     });
   }
 
+  @UseGuards(RoleGuard(Role.ADMIN))
   @Mutation((returns) => User)
   async updateUser(
     @Args('where', { type: () => UserUniqueInput })

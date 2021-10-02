@@ -113,7 +113,7 @@ model Discount {
 }
 
 model Coupon {
-  id           Int       @id @default(autoincrement())
+  id           Int       @id @unique @default(autoincrement())
   code         String
   public       Boolean   @default(false)
   used         Boolean   @default(false)
