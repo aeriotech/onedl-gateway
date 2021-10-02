@@ -15,6 +15,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       context.getHandler(),
       context.getClass(),
     ]);
+
     if (isPublic) {
       return true;
     }
@@ -22,10 +23,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   getRequest(context: ExecutionContext) {
-    if (context.switchToHttp().getRequest()) {
-      return context.switchToHttp().getRequest();
-    } else {
-      return GqlExecutionContext.create(context).getContext().req;
-    }
+    return (
+      context.switchToHttp().getRequest() ??
+      GqlExecutionContext.create(context).getContext().req
+    );
   }
 }
