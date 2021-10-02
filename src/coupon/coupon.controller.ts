@@ -25,6 +25,7 @@ export class CouponController {
   @ApiBearerAuth('User')
   @ApiBearerAuth('Admin')
   @UseInterceptors(PublicFilter(PublicCoupon))
+  @Public()
   @Get()
   getCoupons(@UserId() userId: number) {
     return this.couponService.getPublicCoupons(userId);

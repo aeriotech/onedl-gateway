@@ -6,7 +6,7 @@ export const UserId = createParamDecorator(
     const request = ctx.switchToHttp().getRequest();
     return (
       request?.user?.userId ??
-      GqlExecutionContext.create(ctx).getContext().req.user.userId
+      GqlExecutionContext.create(ctx).getContext().req?.user?.userId
     );
   },
 );
