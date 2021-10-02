@@ -26,7 +26,7 @@ export class Coupon implements PrismaCoupon {
   @Field()
   discountUuid: string;
 
-  @Field((type) => User)
+  @Field((type) => User, { nullable: true })
   user: User;
   userId: number;
 

@@ -91,9 +91,19 @@ type Coupon {
   validTo: DateTime!
   discount: Discount!
   discountUuid: String!
-  user: User!
+  user: User
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+type Post {
+  id: Int!
+  url: String!
+  imageId: Int!
+  image: PublicFile!
+  public: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime
 }
 
 type Query {
@@ -106,6 +116,8 @@ type Query {
   discount(where: DiscountUniqueInput!): Discount
   coupons: [Coupon!]!
   coupon(where: CouponUniqueInput!): Coupon!
+  posts: [Post!]
+  post(where: PostUniqueInput!): Post
 }
 
 input UserUniqueInput {
@@ -127,9 +139,16 @@ input CouponUniqueInput {
   id: Int
 }
 
+input PostUniqueInput {
+  id: Int!
+}
+
 type Mutation {
   updateUser(data: UpdateUserDto!, where: UserUniqueInput!): User!
   deleteUser(where: UserUniqueInput!): User!
+  createPost(data: UpdatePostDto!): Post!
+  updatePost(data: UpdatePostDto!, where: PostUniqueInput!): Post!
+  deletePost(where: PostUniqueInput!): Post!
 }
 
 input UpdateUserDto {
@@ -141,4 +160,9 @@ input UpdateUserDto {
   emailConfirmed: Boolean
   ageConfirmed: Boolean
   forgotPasswordToken: String
+}
+
+input UpdatePostDto {
+  url: String!
+  imageId: Int!
 }

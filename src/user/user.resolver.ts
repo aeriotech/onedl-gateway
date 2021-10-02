@@ -64,7 +64,7 @@ export class UserResolver {
     });
   }
 
-  @UseGuards(RoleGuard(Role.ADMIN))
+  @UseGuards(RoleGuard(Role.ADMIN, Role.EDITOR))
   @Query((returns) => User, { nullable: true })
   async me(@UserId() id: number) {
     return await this.prisma.user.findUnique({

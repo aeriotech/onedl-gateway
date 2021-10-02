@@ -9,7 +9,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { Role } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
-export const RoleGuard = (role: Role) => {
+export const RoleGuard = (...roles: Role[]) => {
   @Injectable()
   class RoleGuardMixin implements CanActivate {
     constructor(private readonly prisma: PrismaService) {}
@@ -25,7 +25,8 @@ export const RoleGuard = (role: Role) => {
       if (!user) {
         throw new UnauthorizedException();
       }
-      return user.role === role;
+
+      return roles.includes(user.role);
     }
 
     getGraphQLContext(context: ExecutionContext) {

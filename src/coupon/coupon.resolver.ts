@@ -28,26 +28,35 @@ export class CouponResolver {
 
   @ResolveField()
   async discount(@Root() coupon: Coupon) {
-    return this.prisma.coupon
+    return await this.prisma.coupon
       .findUnique({
         where: { id: coupon.id },
       })
       .discount();
   }
 
-  @UseGuards(RoleGuard(Role.ADMIN))
-  @Query((returns) => [Coupon])
-  async coupons() {
-    return this.prisma.coupon.findMany();
+  @ResolveField()
+  async user(@Root() coupon: Coupon) {
+    return await this.prisma.coupon
+      .findUnique({
+        where: { id: coupon.id },
+      })
+      .user();
   }
 
-  @UseGuards(RoleGuard(Role.ADMIN))
+  @UseGuards(RoleGuard(Role.ADMIN, Role.EDITOR))
+  @Query((returns) => [Coupon])
+  async coupons() {
+    return await this.prisma.coupon.findMany();
+  }
+
+  @UseGuards(RoleGuard(Role.ADMIN, Role.EDITOR))
   @Query((returns) => Coupon)
   async coupon(
     @Args('where', { type: () => CouponUniqueInput })
     couponUniqueInput: CouponUniqueInput,
   ) {
-    return this.prisma.coupon.findUnique({
+    return await this.prisma.coupon.findUnique({
       where: couponUniqueInput,
     });
   }
