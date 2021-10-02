@@ -10,6 +10,7 @@ import {
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Public } from 'src/auth/public.decorator';
 import { RoleGuard } from 'src/role/role.guard';
 import { UserId } from 'src/user/user.decorator';
 import { PublicFilter } from 'src/utils/filter.interceptor';
