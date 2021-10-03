@@ -15,6 +15,7 @@ import { IsInt } from 'class-validator';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RoleGuard } from 'src/role/role.guard';
 import handlePrismaError from 'src/utils/prisma-error-handler';
+import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Post } from './models/post.model';
 
@@ -58,12 +59,12 @@ export class PostResolver {
   @UseGuards(RoleGuard(Role.ADMIN, Role.EDITOR))
   @Mutation((returns) => Post)
   async createPost(
-    @Args('data', { type: () => UpdatePostDto })
-    updatePostDto: UpdatePostDto,
+    @Args('data', { type: () => CreatePostDto })
+    createPostDto: CreatePostDto,
   ) {
     try {
       return await this.prisma.post.create({
-        data: updatePostDto,
+        data: createPostDto,
       });
     } catch (e) {
       handlePrismaError(e, 'Post');

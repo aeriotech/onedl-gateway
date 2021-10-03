@@ -163,7 +163,7 @@ input CommingSoonUniqueInput {
 type Mutation {
   updateUser(data: UpdateUserDto!, where: UserUniqueInput!): User!
   deleteUser(where: UserUniqueInput!): User!
-  createPost(data: UpdatePostDto!): Post!
+  createPost(data: CreatePostDto!): Post!
   updatePost(data: UpdatePostDto!, where: PostUniqueInput!): Post!
   deletePost(where: PostUniqueInput!): Post!
   createCommingSoon(data: UpdateCommingSoonDto!): CommingSoon!
@@ -181,6 +181,11 @@ input UpdateUserDto {
   emailConfirmationSentAt: DateTime
   ageConfirmed: Boolean
   forgotPasswordToken: String
+}
+
+input CreatePostDto {
+  url: String!
+  imageId: Int!
 }
 
 input UpdatePostDto {
