@@ -1,9 +1,9 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { CommingSoon as ComminSoonPrisma } from '@prisma/client';
+import { ComingSoon as ComingSoonPrisma } from '@prisma/client';
 import { PublicFile } from 'src/files/models/public-file.model';
 
 @ObjectType()
-export class CommingSoon implements ComminSoonPrisma {
+export class ComingSoon implements ComingSoonPrisma {
   @Field((type) => Int)
   id: number;
 

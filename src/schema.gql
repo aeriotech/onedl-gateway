@@ -106,7 +106,7 @@ type Post {
   updatedAt: DateTime
 }
 
-type CommingSoon {
+type ComingSoon {
   id: Int!
   name: String!
   image: PublicFile!
@@ -129,8 +129,8 @@ type Query {
   coupon(where: CouponUniqueInput!): Coupon!
   posts: [Post!]
   post(where: PostUniqueInput!): Post
-  commingSoonList: [CommingSoon!]
-  commingSoon(where: CommingSoonUniqueInput!): CommingSoon
+  comingSoonList: [ComingSoon!]
+  comingSoon(where: ComingSoonUniqueInput!): ComingSoon
 }
 
 input UserUniqueInput {
@@ -156,7 +156,7 @@ input PostUniqueInput {
   id: Int!
 }
 
-input CommingSoonUniqueInput {
+input ComingSoonUniqueInput {
   id: Int!
 }
 
@@ -166,9 +166,9 @@ type Mutation {
   createPost(data: CreatePostDto!): Post!
   updatePost(data: UpdatePostDto!, where: PostUniqueInput!): Post!
   deletePost(where: PostUniqueInput!): Post!
-  createCommingSoon(data: UpdateCommingSoonDto!): CommingSoon!
-  updateCommingSoon(data: UpdateCommingSoonDto!, where: CommingSoonUniqueInput!): CommingSoon!
-  deleteCommingSoon(where: CommingSoonUniqueInput!): CommingSoon!
+  createCommingSoon(data: UpdateComingSoonDto!): ComingSoon!
+  updateComingSoon(data: UpdateComingSoonDto!, where: ComingSoonUniqueInput!): ComingSoon!
+  deleteComingSoon(where: ComingSoonUniqueInput!): ComingSoon!
 }
 
 input UpdateUserDto {
@@ -195,7 +195,7 @@ input UpdatePostDto {
   public: Boolean
 }
 
-input UpdateCommingSoonDto {
+input UpdateComingSoonDto {
   name: String
   imageId: Int
   public: Boolean
