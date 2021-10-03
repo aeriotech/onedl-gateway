@@ -38,11 +38,9 @@ export class FilesController {
   @UseGuards(RoleGuard(Role.ADMIN, Role.EDITOR))
   @UseInterceptors(FileInterceptor('files'))
   async upload(@UploadedFile() files: Express.Multer.File[]) {
-    return Promise.all(
-      files.map((file) =>
-        this.filesService.uploadPublicFile(file.buffer, file.originalname),
-      ),
-    );
+    for (const file of Array.from(files)) {
+      await this.filesService.uploadPublicFile(file.buffer, file.originalname);
+    }
   }
 
   @Delete(':id')
