@@ -184,13 +184,15 @@ input UpdateUserDto {
 }
 
 input CreatePostDto {
-  url: String!
+  url: String
   imageId: Int!
+  public: Boolean!
 }
 
 input UpdatePostDto {
-  url: String!
-  imageId: Int!
+  url: String
+  imageId: Int
+  public: Boolean
 }
 
 input UpdateCommingSoonDto {

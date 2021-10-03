@@ -1,4 +1,4 @@
-import { Plan, Role, User } from '@prisma/client';
+import { Plan, Profile, Role, User } from '@prisma/client';
 import { Expose } from 'class-transformer';
 
 export class PublicUser implements User {
@@ -23,6 +23,8 @@ export class PublicUser implements User {
 
   password: string;
 
+  @Expose()
+  profile: Profile;
   profileId: number;
 
   @Expose()
