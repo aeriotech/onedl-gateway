@@ -166,7 +166,7 @@ type Mutation {
   createPost(data: CreatePostDto!): Post!
   updatePost(data: UpdatePostDto!, where: PostUniqueInput!): Post!
   deletePost(where: PostUniqueInput!): Post!
-  createCommingSoon(data: UpdateComingSoonDto!): ComingSoon!
+  createComingSoon(data: UpdateComingSoonDto!): ComingSoon!
   updateComingSoon(data: UpdateComingSoonDto!, where: ComingSoonUniqueInput!): ComingSoon!
   deleteComingSoon(where: ComingSoonUniqueInput!): ComingSoon!
 }
