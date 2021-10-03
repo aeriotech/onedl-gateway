@@ -1,13 +1,17 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsInt, IsUrl } from 'class-validator';
+import { IsBoolean, IsInt, IsUrl } from 'class-validator';
 
 @InputType()
 export class CreatePostDto {
   @IsUrl()
-  @Field()
+  @Field({ nullable: true })
   url?: string;
 
   @IsInt()
   @Field((type) => Int)
   imageId?: number;
+
+  @IsBoolean()
+  @Field()
+  public?: boolean;
 }
