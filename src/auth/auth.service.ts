@@ -16,7 +16,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  private readonly logger: Logger = new Logger('AuthService');
+  private readonly logger: Logger = new Logger(AuthService.name);
 
   async validateUser(authLoginDto: AuthLoginDto) {
     const { username, password } = authLoginDto;

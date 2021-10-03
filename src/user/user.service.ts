@@ -24,7 +24,7 @@ export class UserService {
     private readonly discordService: DiscordService,
   ) {}
 
-  private readonly logger: Logger = new Logger('UserService');
+  private readonly logger: Logger = new Logger(UserService.name);
 
   async findPublic(select: Prisma.UserWhereUniqueInput) {
     await this.check(select);

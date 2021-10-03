@@ -12,6 +12,7 @@ import {
 } from '@nestjs/swagger';
 import { getFromContainer, MetadataStorage } from 'class-validator';
 import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
+import { TasksService } from './tasks/tasks.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -69,5 +70,12 @@ async function bootstrap() {
   });
 
   await app.listen(4000);
+
+  const tasksService = app.get(TasksService);
+  try {
+    await tasksService.resendConfirmationEmails();
+  } catch (e) {
+    console.log(e);
+  }
 }
 bootstrap();

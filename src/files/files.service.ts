@@ -12,7 +12,7 @@ export class FilesService {
     private readonly prisma: PrismaService,
   ) {}
 
-  private readonly logger = new Logger('FilesService');
+  private readonly logger = new Logger(FilesService.name);
 
   async uploadPrivateFile(dataBuffer: Buffer, filename: string) {
     const s3 = new S3({
