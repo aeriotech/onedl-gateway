@@ -28,7 +28,7 @@ export class TasksService {
   //   this.logger.log('Unconfirmed users deleted');
   // }
 
-  @Cron('0 */1 * * * *')
+  @Cron('0 */1 * * *')
   async resendConfirmationEmails() {
     this.logger.log('Sending confirmation emails to unconfirmed users');
 
