@@ -12,7 +12,7 @@ export class MailService {
     private readonly configService: ConfigService,
   ) {}
 
-  async sendConfirmMail(email: string, token: string) {
+  async sendConfirmMail(email: string, token: string, late: boolean = false) {
     const url = this.configService.get('MAIL_CONFIRM_URL');
     if (!url) {
       throw new Error('There was an error sending the confirmation email');
@@ -20,8 +20,10 @@ export class MailService {
     const user = await this.userService.find({ email });
     return this.mailerService.sendMail({
       to: user.email,
-      subject: 'Potrditev e-poštnega naslova',
-      template: './email',
+      subject: late
+        ? 'Ponovna potrditev e-poštnega naslova'
+        : 'Potrditev e-poštnega naslova',
+      template: late ? './email-late' : './email',
       context: {
         name: user.profile.firstName,
         url: `${url}${token}`,

@@ -3,6 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Plan, Role } from '@prisma/client';
 import {
   IsBoolean,
+  IsDate,
   IsEmail,
   IsEnum,
   IsJWT,
@@ -39,6 +40,10 @@ export class UpdateUserDto {
   @IsBoolean()
   @Field({ nullable: true })
   emailConfirmed?: boolean;
+
+  @IsDate()
+  @Field({ nullable: true })
+  emailConfirmationSentAt?: Date;
 
   @IsBoolean()
   @Field({ nullable: true })

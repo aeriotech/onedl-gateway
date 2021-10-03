@@ -24,6 +24,9 @@ import { join } from 'path';
 import { GraphQLModule } from '@nestjs/graphql';
 import { PostModule } from './post/post.module';
 import { CommingSoonModule } from './comming-soon/comming-soon.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TasksService } from './tasks/tasks.service';
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
@@ -44,6 +47,8 @@ import { CommingSoonModule } from './comming-soon/comming-soon.module';
     SlackModule,
     DiscordModule,
     AgeConfirmationModule,
+    TasksModule,
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -53,6 +58,7 @@ import { CommingSoonModule } from './comming-soon/comming-soon.module';
     }),
     PostModule,
     CommingSoonModule,
+    TasksModule,
   ],
   providers: [
     StartupService,
@@ -60,6 +66,7 @@ import { CommingSoonModule } from './comming-soon/comming-soon.module';
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
+    TasksService,
   ],
 })
 export class AppModule {}

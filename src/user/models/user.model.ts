@@ -29,6 +29,7 @@ export class User implements PrismaUser {
 
   @Field()
   emailConfirmed: boolean;
+  emailConfirmationSentAt: Date;
 
   @Field()
   ageConfirmed: boolean;

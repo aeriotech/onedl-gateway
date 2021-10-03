@@ -16,6 +16,8 @@ export class PublicUser implements User {
   @Expose()
   emailConfirmed: boolean;
 
+  emailConfirmationSentAt: Date;
+
   @Expose()
   ageConfirmed: boolean;
 

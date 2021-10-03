@@ -12,7 +12,7 @@ export class ForgotPasswordService {
     private readonly userService: UserService,
   ) {}
 
-  private logger = new Logger('ForgotPasswordService');
+  private logger = new Logger(ForgotPasswordService.name);
 
   async forgotPassword(email: string) {
     this.logger.log(`Forgot password for ${email}`);

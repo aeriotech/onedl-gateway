@@ -27,7 +27,7 @@ export class CouponService {
     private readonly userService: UserService,
   ) {}
 
-  private readonly logger: Logger = new Logger('CouponService');
+  private readonly logger: Logger = new Logger(CouponService.name);
 
   async getCoupons(user: Prisma.UserWhereUniqueInput): Promise<Coupons> {
     await this.userService.check(user);

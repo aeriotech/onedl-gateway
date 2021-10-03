@@ -5,7 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class SlackService {
   private client: WebClient;
-  private logger: Logger = new Logger('SlackService');
+  private logger: Logger = new Logger(SlackService.name);
 
   constructor(private readonly prisma: PrismaService) {
     this.client = new WebClient(process.env.SLACK_TOKEN);

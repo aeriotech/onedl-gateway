@@ -21,14 +21,27 @@ export class EmailConfirmationService {
     private readonly userService: UserService,
   ) {}
 
-  private logger = new Logger('EmailConfirmationService');
+  private logger = new Logger(EmailConfirmationService.name);
 
-  async sendConfirmationEmail({ email }: User) {
+  async sendConfirmationEmail({ email, emailConfirmationSentAt }: User) {
     this.logger.verbose(`Sending confirmation email to ${email}`);
     const payload: EmailVerificationPayload = { email };
     const token = this.jwtService.sign(payload);
-    await this.mailService.sendConfirmMail(email, token);
-    this.logger.verbose(`Confirmation email sent to ${email}`);
+    try {
+      await this.mailService.sendConfirmMail(
+        email,
+        token,
+        !emailConfirmationSentAt,
+      );
+      await this.userService.update(
+        { email },
+        { emailConfirmationSentAt: new Date() },
+      );
+      this.logger.verbose(`Confirmation email sent to ${email}`);
+    } catch (e) {
+      this.logger.error(e);
+      throw new Error('There was an error sending the confirmation email');
+    }
   }
 
   async confirmEmail({ token }: ConfirmEmailDto) {

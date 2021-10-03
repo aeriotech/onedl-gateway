@@ -4,7 +4,7 @@ import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class DiscordService {
-  private logger: Logger = new Logger('DiscordService');
+  private logger: Logger = new Logger(DiscordService.name);
   private client: Client;
   private ready: boolean = false;
 

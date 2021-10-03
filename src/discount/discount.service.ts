@@ -25,7 +25,7 @@ export class DiscountService {
     private readonly couponService: CouponService,
   ) {}
 
-  private readonly logger = new Logger('DiscountService');
+  private readonly logger = new Logger(DiscountService.name);
 
   async createDiscount(data: CreateDiscountDto) {
     await this.shopService.getShop({ id: data.shopId });

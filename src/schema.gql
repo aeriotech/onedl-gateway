@@ -178,6 +178,7 @@ input UpdateUserDto {
   role: String
   plan: String
   emailConfirmed: Boolean
+  emailConfirmationSentAt: DateTime
   ageConfirmed: Boolean
   forgotPasswordToken: String
 }
