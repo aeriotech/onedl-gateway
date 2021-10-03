@@ -2,20 +2,17 @@ import {
   Body,
   Controller,
   Get,
-  Param,
   Post,
   Put,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Role } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Public } from 'src/auth/public.decorator';
-import { RoleGuard } from 'src/role/role.guard';
 import { PublicFilter } from 'src/utils/filter.interceptor';
 import { RegisterDto } from './dto/register.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdatePublicUserDto } from './dto/update-public-user.dto';
 import { PublicUser } from './models/public-user.model';
 import { UserId } from './user.decorator';
 import { UserService } from './user.service';
@@ -50,15 +47,14 @@ export class UserController {
   }
 
   /**
-   * Updates the user with the given id
-   * @param username Username of the user
+   * Update the currently authenticated user
    * @param updateUserDto Fields to update
    * @returns Updaed user
    */
   @ApiBearerAuth('User')
-  @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
+  @UseGuards(JwtAuthGuard)
   @Put()
-  updateUser(@UserId() id: number, @Body() updateUserDto: UpdateUserDto) {
+  updateUser(@UserId() id: number, @Body() updateUserDto: UpdatePublicUserDto) {
     return this.userService.updatePublic(+id, updateUserDto);
   }
 }
