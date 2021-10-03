@@ -1,7 +1,7 @@
-import { CommingSoon, PublicFile } from '@prisma/client';
+import { ComingSoon, PublicFile } from '@prisma/client';
 import { Expose } from 'class-transformer';
 
-export class PublicComminSoon implements CommingSoon {
+export class PublicComminSoon implements ComingSoon {
   id: number;
 
   @Expose()

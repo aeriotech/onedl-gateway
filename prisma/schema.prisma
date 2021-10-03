@@ -139,7 +139,7 @@ model PublicFile {
   discountThumbnail Discount[]    @relation("thumbnail")
   createdAt         DateTime      @default(now())
   updatedAt         DateTime?     @updatedAt
-  CommingSoon       CommingSoon[]
+  comingSoon       ComingSoon[]
 }
 
 model PrivateFile {
@@ -174,7 +174,7 @@ model Post {
   updatedAt DateTime? @updatedAt
 }
 
-model CommingSoon {
+model ComingSoon {
   id      Int         @id @default(autoincrement())
   name    String
   image   PublicFile? @relation(fields: [imageId], references: [id])

@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
-export class CommingSoonService {
+export class ComingSoonService {
   constructor(private readonly prisma: PrismaService) {}
 
   findAll() {
-    return this.prisma.commingSoon.findMany({
+    return this.prisma.comingSoon.findMany({
       include: {
         image: {
           select: {

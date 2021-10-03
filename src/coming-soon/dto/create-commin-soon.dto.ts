@@ -2,7 +2,7 @@ import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsInt, IsString } from 'class-validator';
 
 @InputType()
-export class CreateCommingSoonDto {
+export class CreateComingSoonDto {
   @Field()
   @IsString()
   name: string;
