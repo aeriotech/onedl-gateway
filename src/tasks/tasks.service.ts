@@ -43,11 +43,10 @@ export class TasksService {
 
     this.logger.log(`Found ${users.length} unconfirmed users`);
 
-    const promises = users.map((user) =>
-      this.emailConfirmationService.sendConfirmationEmail(user),
-    );
+    for (const user of users) {
+      await this.emailConfirmationService.sendConfirmationEmail(user);
+    }
 
-    await Promise.all(promises);
     this.logger.log('Confirmation emails sent successfully');
   }
 }
