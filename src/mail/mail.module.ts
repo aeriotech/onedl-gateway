@@ -26,7 +26,7 @@ import { UserModule } from 'src/user/user.module';
           from: `"Fundl" <${config.get('MAIL_FROM')}>`,
         },
         template: {
-          dir: join(__dirname, '..', '..', 'mail', 'templates'),
+          dir: join(__dirname, '..', '..', '..', 'templates'),
           adapter: new HandlebarsAdapter(),
           options: {
             strict: true,

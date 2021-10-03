@@ -128,16 +128,17 @@ model Coupon {
 }
 
 model PublicFile {
-  id                Int        @id @default(autoincrement())
+  id                Int           @id @default(autoincrement())
   url               String
-  key               String     @unique
+  key               String        @unique
   profile           Profile[]
   shop              Shop[]
   Post              Post[]
-  discountImage     Discount[] @relation("image")
-  discountThumbnail Discount[] @relation("thumbnail")
-  createdAt         DateTime   @default(now())
-  updatedAt         DateTime?  @updatedAt
+  discountImage     Discount[]    @relation("image")
+  discountThumbnail Discount[]    @relation("thumbnail")
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime?     @updatedAt
+  CommingSoon       CommingSoon[]
 }
 
 model PrivateFile {
@@ -164,6 +165,17 @@ model DailySession {
 model Post {
   id      Int         @id @default(autoincrement())
   url     String?
+  image   PublicFile? @relation(fields: [imageId], references: [id])
+  imageId Int?
+  public  Boolean     @default(false)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+}
+
+model CommingSoon {
+  id      Int         @id @default(autoincrement())
+  name    String
   image   PublicFile? @relation(fields: [imageId], references: [id])
   imageId Int?
   public  Boolean     @default(false)

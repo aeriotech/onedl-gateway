@@ -23,6 +23,7 @@ import { AgeConfirmationModule } from './age-confirmation/age-confirmation.modul
 import { join } from 'path';
 import { GraphQLModule } from '@nestjs/graphql';
 import { PostModule } from './post/post.module';
+import { CommingSoonModule } from './comming-soon/comming-soon.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { PostModule } from './post/post.module';
       context: ({ req }) => ({ req }),
     }),
     PostModule,
+    CommingSoonModule,
   ],
   providers: [
     StartupService,
