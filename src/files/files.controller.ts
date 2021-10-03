@@ -4,11 +4,11 @@ import {
   Delete,
   Param,
   Post,
-  UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { RoleGuard } from 'src/role/role.guard';
 import { FilesService } from './files.service';
@@ -36,9 +36,9 @@ export class FilesController {
     },
   })
   @UseGuards(RoleGuard(Role.ADMIN, Role.EDITOR))
-  @UseInterceptors(FileInterceptor('files'))
-  async upload(@UploadedFile() files: Express.Multer.File[]) {
-    for (const file of Array.from(files)) {
+  @UseInterceptors(FilesInterceptor('files'))
+  async upload(@UploadedFiles() files: Array<Express.Multer.File>) {
+    for (const file of files) {
       await this.filesService.uploadPublicFile(file.buffer, file.originalname);
     }
   }
