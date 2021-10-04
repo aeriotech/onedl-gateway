@@ -58,16 +58,16 @@ export class ComingSoonResolver {
 
   @UseGuards(RoleGuard(Role.ADMIN, Role.EDITOR))
   @Mutation((returns) => ComingSoon)
-  async createCommingSoon(
+  async createComingSoon(
     @Args('data', { type: () => UpdateComingSoonDto })
-    updateCommingSoonDto: CreateComingSoonDto,
+    updateComingSoonDto: CreateComingSoonDto,
   ) {
     try {
       return await this.prisma.comingSoon.create({
-        data: updateCommingSoonDto,
+        data: updateComingSoonDto,
       });
     } catch (e) {
-      handlePrismaError(e, 'Comming Soon');
+      handlePrismaError(e, 'Coming Soon');
     }
   }
 

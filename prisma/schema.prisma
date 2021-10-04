@@ -20,13 +20,15 @@ model User {
   emailConfirmed          Boolean       @default(false)
   emailConfirmationSentAt DateTime?
   ageConfirmed            Boolean       @default(false)
+  birthDate               DateTime?
+  emso                    String?       @unique
   score                   Int           @default(0)
   lastDaily               DateTime      @default(now())
   coupons                 Coupon[]
-  createdAt               DateTime      @default(now())
-  updatedAt               DateTime?     @updatedAt
   dailySessionUuid        String?
   dailySession            DailySession? @relation
+  createdAt               DateTime      @default(now())
+  updatedAt               DateTime?     @updatedAt
 }
 
 enum Role {
@@ -129,17 +131,17 @@ model Coupon {
 }
 
 model PublicFile {
-  id                Int           @id @default(autoincrement())
+  id                Int          @id @default(autoincrement())
   url               String
-  key               String        @unique
+  key               String       @unique
   profile           Profile[]
   shop              Shop[]
   Post              Post[]
-  discountImage     Discount[]    @relation("image")
-  discountThumbnail Discount[]    @relation("thumbnail")
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime?     @updatedAt
-  comingSoon       ComingSoon[]
+  discountImage     Discount[]   @relation("image")
+  discountThumbnail Discount[]   @relation("thumbnail")
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime?    @updatedAt
+  comingSoon        ComingSoon[]
 }
 
 model PrivateFile {

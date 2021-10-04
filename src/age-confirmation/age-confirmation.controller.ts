@@ -1,6 +1,8 @@
-import { Controller, Param, Post } from '@nestjs/common';
+import { Controller, Param, Post, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { PublicUser } from 'src/user/models/public-user.model';
 import { UserId } from 'src/user/user.decorator';
+import { PublicFilter } from 'src/utils/filter.interceptor';
 import { AgeConfirmationService } from './age-confirmation.service';
 
 @ApiTags('Age Confirmation')
@@ -12,8 +14,9 @@ export class AgeConfirmationController {
 
   @ApiBearerAuth('Admin')
   @ApiBearerAuth('User')
+  @UseInterceptors(PublicFilter(PublicUser))
   @Post('emso/:emso')
-  confirmEMSO(@UserId() userId: number, @Param('emso') emso: string) {
-    this.ageConfirmationService.confirmEMSO(userId, emso);
+  async confirmEMSO(@UserId() userId: number, @Param('emso') emso: string) {
+    await this.ageConfirmationService.confirmEmso(userId, emso);
   }
 }

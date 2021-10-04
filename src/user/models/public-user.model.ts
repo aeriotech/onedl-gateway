@@ -21,6 +21,9 @@ export class PublicUser implements User {
   @Expose()
   ageConfirmed: boolean;
 
+  birthDate: Date;
+  emso: string;
+
   password: string;
 
   @Expose()
