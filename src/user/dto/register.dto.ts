@@ -26,8 +26,4 @@ export class RegisterDto {
   @IsNotEmpty()
   @MaxLength(20)
   lastName: string;
-
-  @IsBoolean()
-  @IsNotEmpty()
-  ageConfirmed: boolean;
 }

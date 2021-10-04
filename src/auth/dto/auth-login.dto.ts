@@ -2,7 +2,7 @@ import { IsNotEmpty, MaxLength } from 'class-validator';
 
 export class AuthLoginDto {
   @IsNotEmpty()
-  @MaxLength(20)
+  @MaxLength(50)
   username: string;
 
   @IsNotEmpty()

@@ -76,7 +76,6 @@ export class UserService {
     password,
     firstName,
     lastName,
-    ageConfirmed,
   }: RegisterDto) {
     const hashedPassword = await this.hashPassword(password);
 
@@ -85,7 +84,6 @@ export class UserService {
         data: {
           username,
           email,
-          ageConfirmed,
           password: hashedPassword,
           profile: {
             create: {
@@ -150,7 +148,7 @@ export class UserService {
     updateUserDto: UpdateUserDto,
   ) {
     await this.check(user);
-    let hashedPassword;
+    let hashedPassword, hashedEmso;
     if (updateUserDto.password) {
       const salt = await bcrypt.genSalt();
       hashedPassword = await bcrypt.hash(updateUserDto.password, salt);

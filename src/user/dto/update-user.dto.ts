@@ -6,6 +6,7 @@ import {
   IsDate,
   IsEmail,
   IsEnum,
+  IsHash,
   IsJWT,
   IsString,
   Length,
@@ -48,6 +49,14 @@ export class UpdateUserDto {
   @IsBoolean()
   @Field({ nullable: true })
   ageConfirmed?: boolean;
+
+  @IsString()
+  @Field({ nullable: true })
+  emso?: string;
+
+  @IsDate()
+  @Field({ nullable: true })
+  birthDate?: Date;
 
   @IsJWT()
   @Field({ nullable: true })

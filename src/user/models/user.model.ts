@@ -34,6 +34,12 @@ export class User implements PrismaUser {
   @Field()
   ageConfirmed: boolean;
 
+  @Field()
+  birthDate: Date;
+
+  @Field()
+  emso: string;
+
   @Field((type) => Int)
   score: number;
   lastDaily: Date;

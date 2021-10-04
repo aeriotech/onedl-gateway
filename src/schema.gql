@@ -35,6 +35,8 @@ type User {
   profile: Profile!
   emailConfirmed: Boolean!
   ageConfirmed: Boolean!
+  birthDate: DateTime!
+  emso: String!
   score: Int!
   createdAt: DateTime!
   updatedAt: DateTime
@@ -180,6 +182,8 @@ input UpdateUserDto {
   emailConfirmed: Boolean
   emailConfirmationSentAt: DateTime
   ageConfirmed: Boolean
+  emso: String
+  birthDate: DateTime
   forgotPasswordToken: String
 }
 
