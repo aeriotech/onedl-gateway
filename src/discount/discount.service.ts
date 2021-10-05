@@ -99,7 +99,7 @@ export class DiscountService {
         discount: {
           public: true,
         },
-        user: undefined,
+        user: null,
       },
     });
     const used = await this.prisma.coupon.count({

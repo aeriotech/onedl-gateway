@@ -44,7 +44,7 @@ export class TasksService {
     this.logger.log(`Found ${users.length} unconfirmed users`);
 
     for (const user of users) {
-      await this.emailConfirmationService.sendConfirmationEmail(user);
+      await this.emailConfirmationService.sendConfirmationEmail(user.email);
     }
 
     this.logger.log('Confirmation emails sent successfully');
