@@ -85,6 +85,7 @@ export class UserService {
           username,
           email,
           password: hashedPassword,
+          score: 10,
           profile: {
             create: {
               firstName,
