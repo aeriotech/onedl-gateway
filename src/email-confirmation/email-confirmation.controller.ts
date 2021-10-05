@@ -1,7 +1,8 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/auth/public.decorator';
 import { ConfirmEmailDto } from './dtos/confirm-email.dto';
+import { SendConfirmEmailDto } from './dtos/send-confirm-email.dto';
 import { EmailConfirmationService } from './email-confirmation.service';
 
 @ApiTags('Email confirmation')
@@ -10,6 +11,16 @@ export class EmailConfirmationController {
   constructor(
     private readonly emailConfirmationService: EmailConfirmationService,
   ) {}
+
+  @Put()
+  @Public()
+  async sendEmailConfirmation(
+    @Body() sendConfirmEmailDto: SendConfirmEmailDto,
+  ) {
+    this.emailConfirmationService.sendConfirmationEmail(
+      sendConfirmEmailDto.email,
+    );
+  }
 
   @Post()
   @Public()

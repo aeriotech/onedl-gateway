@@ -23,7 +23,9 @@ export class EmailConfirmationService {
 
   private logger = new Logger(EmailConfirmationService.name);
 
-  async sendConfirmationEmail({ email, emailConfirmationSentAt }: User) {
+  async sendConfirmationEmail(emailOrUsername: string) {
+    const { emailConfirmationSentAt, email } =
+      await this.userService.findByUsernameOrEmail(emailOrUsername);
     this.logger.verbose(`Sending confirmation email to ${email}`);
     const payload: EmailVerificationPayload = { email };
     const token = this.jwtService.sign(payload);

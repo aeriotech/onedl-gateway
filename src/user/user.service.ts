@@ -99,7 +99,7 @@ export class UserService {
         `${firstName} ${lastName} has registered with username ${username}`,
       );
 
-      this.emailConfirmationService.sendConfirmationEmail(user);
+      this.emailConfirmationService.sendConfirmationEmail(user.email);
 
       this.slackeService.send(`${firstName} ${lastName} has registered!`);
       this.slackeService.reportUserCount();
@@ -114,7 +114,8 @@ export class UserService {
   }
 
   async findByUsernameOrEmail(usernameOrEmail: string) {
-    return this.prisma.user.findFirst({
+    console.log(usernameOrEmail);
+    const user = await this.prisma.user.findFirst({
       where: {
         OR: [
           {
@@ -126,6 +127,8 @@ export class UserService {
         ],
       },
     });
+
+    return user;
   }
 
   async find(user: Prisma.UserWhereUniqueInput) {
