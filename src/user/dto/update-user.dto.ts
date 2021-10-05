@@ -7,6 +7,7 @@ import {
   IsEmail,
   IsEnum,
   IsHash,
+  IsInt,
   IsJWT,
   IsString,
   Length,
@@ -49,6 +50,10 @@ export class UpdateUserDto {
   @IsBoolean()
   @Field({ nullable: true })
   ageConfirmed?: boolean;
+
+  @IsInt()
+  @Field({ nullable: true })
+  score?: number;
 
   @IsString()
   @Field({ nullable: true })
