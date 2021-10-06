@@ -200,9 +200,9 @@ input UpdateUserDto {
 }
 
 input UpdateProfileDto {
-  firstName: String!
-  lastName: String!
-  bio: String!
+  firstName: String
+  lastName: String
+  bio: String
 }
 
 input CreateShopDto {

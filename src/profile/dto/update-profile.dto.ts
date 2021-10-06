@@ -3,15 +3,15 @@ import { IsString } from 'class-validator';
 
 @InputType()
 export class UpdateProfileDto {
-  @Field()
+  @Field({ nullable: true })
   @IsString()
-  firstName: string;
+  firstName?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @IsString()
-  lastName: string;
+  lastName?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @IsString()
-  bio: string;
+  bio?: string;
 }
