@@ -114,7 +114,6 @@ export class UserService {
   }
 
   async findByUsernameOrEmail(usernameOrEmail: string) {
-    console.log(usernameOrEmail);
     const user = await this.prisma.user.findFirst({
       where: {
         OR: [
