@@ -127,6 +127,8 @@ type Query {
   discounts: [Discount!]!
   discount(where: DiscountUniqueInput!): Discount
   files: [PublicFile!]
+  shops: [Shop!]!
+  shop(where: ShopUniqueInput!): Shop
   coupons: [Coupon!]!
   coupon(where: CouponUniqueInput!): Coupon!
   posts: [Post!]
@@ -150,6 +152,11 @@ input DiscountUniqueInput {
   uuid: String
 }
 
+input ShopUniqueInput {
+  id: Int!
+  uuid: String!
+}
+
 input CouponUniqueInput {
   id: Int
 }
@@ -165,6 +172,9 @@ input ComingSoonUniqueInput {
 type Mutation {
   updateUser(data: UpdateUserDto!, where: UserUniqueInput!): User!
   deleteUser(where: UserUniqueInput!): User!
+  createShop(data: CreateShopDto!): Shop!
+  updateShop(data: UpdateShopDto!, where: ShopUniqueInput!): Shop!
+  deleteShop(where: ShopUniqueInput!): Shop!
   createPost(data: CreatePostDto!): Post!
   updatePost(data: UpdatePostDto!, where: PostUniqueInput!): Post!
   deletePost(where: PostUniqueInput!): Post!
@@ -186,6 +196,17 @@ input UpdateUserDto {
   emso: String
   birthDate: DateTime
   forgotPasswordToken: String
+}
+
+input CreateShopDto {
+  name: String!
+  uuid: String!
+}
+
+input UpdateShopDto {
+  name: String!
+  public: Boolean!
+  logoId: Int!
 }
 
 input CreatePostDto {
