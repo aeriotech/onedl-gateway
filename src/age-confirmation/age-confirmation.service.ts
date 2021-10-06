@@ -56,17 +56,16 @@ export class AgeConfirmationService {
 
   validateEmso(emso: string): boolean {
     const emsoArray = emso.split('').map(Number);
-    const validationNumber = emsoArray.pop();
+    const controllDigit = emsoArray.pop();
     const multipliers = [7, 6, 5, 4, 3, 2, 7, 6, 5, 4, 3, 2];
     const multiplied = emsoArray.map(
       (value, index) => value * multipliers[index],
     );
-    const sum = multiplied.reduce((a, b) => a + b, 0);
 
-    let calcV = 11 - (sum % 11);
-    calcV = calcV === 10 ? 0 : calcV;
+    let controllDigitC = multiplied.reduce((a, b) => a + b, 0) % 11;
+    controllDigitC = controllDigitC === 0 ? 0 : 11 - controllDigitC;
 
-    return calcV === validationNumber;
+    return controllDigitC === controllDigit;
   }
 
   extractDate(emso: string): Date {
