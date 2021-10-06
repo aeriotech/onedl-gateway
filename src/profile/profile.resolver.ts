@@ -4,6 +4,7 @@ import {
   Field,
   InputType,
   Int,
+  Mutation,
   Query,
   ResolveField,
   Resolver,
@@ -12,6 +13,8 @@ import {
 import { Role } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RoleGuard } from 'src/role/role.guard';
+import handlePrismaError from 'src/utils/prisma-error-handler';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 import { Profile } from './models/profile.model';
 
 @InputType()
@@ -57,5 +60,23 @@ export class ProfileResolver {
     return this.prisma.profile.findUnique({
       where: profileUniqueInput,
     });
+  }
+
+  @UseGuards(RoleGuard(Role.ADMIN))
+  @Mutation((returns) => Profile)
+  async updateProfile(
+    @Args('where', { type: () => ProfileUniqueInput })
+    profileUniqueInput: ProfileUniqueInput,
+    @Args('data', { type: () => UpdateProfileDto })
+    updateProfileDto: UpdateProfileDto,
+  ) {
+    try {
+      return await this.prisma.profile.update({
+        where: profileUniqueInput,
+        data: updateProfileDto,
+      });
+    } catch (e) {
+      handlePrismaError(e, 'Profile');
+    }
   }
 }

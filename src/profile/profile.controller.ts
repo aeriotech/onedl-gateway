@@ -12,7 +12,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UserId } from 'src/user/user.decorator';
-import { ProfileUpdateDto } from './dto/profile-update.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ProfileService } from './profile.service';
 import { Express } from 'express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -36,7 +36,7 @@ export class ProfileController {
   @Put()
   updateProfile(
     @UserId() id: number,
-    @Body() profileUpdateDto: ProfileUpdateDto,
+    @Body() profileUpdateDto: UpdateProfileDto,
   ) {
     return this.profileService.updatePublicProfile(id, profileUpdateDto);
   }
