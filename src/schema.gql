@@ -172,6 +172,7 @@ input ComingSoonUniqueInput {
 type Mutation {
   updateUser(data: UpdateUserDto!, where: UserUniqueInput!): User!
   deleteUser(where: UserUniqueInput!): User!
+  updateProfile(data: UpdateProfileDto!, where: ProfileUniqueInput!): Profile!
   createShop(data: CreateShopDto!): Shop!
   updateShop(data: UpdateShopDto!, where: ShopUniqueInput!): Shop!
   deleteShop(where: ShopUniqueInput!): Shop!
@@ -196,6 +197,12 @@ input UpdateUserDto {
   emso: String
   birthDate: DateTime
   forgotPasswordToken: String
+}
+
+input UpdateProfileDto {
+  firstName: String!
+  lastName: String!
+  bio: String!
 }
 
 input CreateShopDto {
