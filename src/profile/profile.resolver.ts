@@ -11,6 +11,7 @@ import {
   Root,
 } from '@nestjs/graphql';
 import { Role } from '@prisma/client';
+import { IsInt } from 'class-validator';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RoleGuard } from 'src/role/role.guard';
 import handlePrismaError from 'src/utils/prisma-error-handler';
@@ -19,7 +20,8 @@ import { Profile } from './models/profile.model';
 
 @InputType()
 class ProfileUniqueInput {
-  @Field((type) => Int)
+  @Field((type) => Int, { nullable: true })
+  @IsInt()
   id: number;
 }
 

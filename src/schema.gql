@@ -144,7 +144,7 @@ input UserUniqueInput {
 }
 
 input ProfileUniqueInput {
-  id: Int!
+  id: Int
 }
 
 input DiscountUniqueInput {
