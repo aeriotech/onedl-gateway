@@ -6,7 +6,9 @@ import {
   Int,
   Mutation,
   Query,
+  ResolveField,
   Resolver,
+  Root,
 } from '@nestjs/graphql';
 import { Role } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -25,9 +27,18 @@ class ShopUniqueInput {
   uuid: string;
 }
 
-@Resolver()
+@Resolver(Shop)
 export class ShopResolver {
   constructor(private readonly prisma: PrismaService) {}
+
+  @ResolveField()
+  async logo(@Root() shop: Shop) {
+    return this.prisma.shop
+      .findUnique({
+        where: { id: shop.id },
+      })
+      .logo();
+  }
 
   @UseGuards(RoleGuard(Role.ADMIN, Role.EDITOR))
   @Query((returns) => [Shop])
