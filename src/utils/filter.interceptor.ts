@@ -12,7 +12,7 @@ import { map } from 'rxjs/operators';
 export const PublicFilter = <T extends new (...args: any[]) => any>(
   entityClass: T,
   groups?: string[],
-) => {
+): any => {
   @Injectable()
   class PublicFilterMixin implements NestInterceptor {
     intercept(

@@ -1,5 +1,6 @@
 import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { Plan, Role, User as PrismaUser } from '@prisma/client';
+import { Coupon } from 'src/coupon/models/coupon.model';
 import { Profile } from 'src/profile/models/profile.model';
 
 registerEnumType(Role, { name: 'Role' });
@@ -26,6 +27,9 @@ export class User implements PrismaUser {
 
   @Field((type) => Profile)
   profile: Profile;
+
+  @Field((type) => [Coupon])
+  coupons: Coupon[];
 
   @Field()
   emailConfirmed: boolean;

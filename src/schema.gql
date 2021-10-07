@@ -15,39 +15,6 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type Profile {
-  id: Int!
-  firstName: String!
-  lastName: String!
-  bio: String!
-  profilePicture: PublicFile
-  user: User
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type User {
-  id: Int!
-  role: Role!
-  username: String!
-  email: String!
-  plan: String!
-  profile: Profile!
-  emailConfirmed: Boolean!
-  ageConfirmed: Boolean!
-  birthDate: DateTime!
-  emso: String!
-  score: Int!
-  createdAt: DateTime!
-  updatedAt: DateTime
-}
-
-enum Role {
-  USER
-  EDITOR
-  ADMIN
-}
-
 type Shop {
   id: Int!
   uuid: String!
@@ -96,6 +63,40 @@ type Coupon {
   user: User
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+type Profile {
+  id: Int!
+  firstName: String!
+  lastName: String!
+  bio: String!
+  profilePicture: PublicFile
+  user: User
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type User {
+  id: Int!
+  role: Role!
+  username: String!
+  email: String!
+  plan: String!
+  profile: Profile!
+  coupons: [Coupon!]!
+  emailConfirmed: Boolean!
+  ageConfirmed: Boolean!
+  birthDate: DateTime!
+  emso: String!
+  score: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime
+}
+
+enum Role {
+  USER
+  EDITOR
+  ADMIN
 }
 
 type Post {
