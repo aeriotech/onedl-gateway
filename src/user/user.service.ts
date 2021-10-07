@@ -118,16 +118,26 @@ export class UserService {
       where: {
         OR: [
           {
-            username: usernameOrEmail,
+            username: {
+              equals: usernameOrEmail,
+              mode: 'insensitive',
+            },
           },
           {
-            email: usernameOrEmail,
+            email: {
+              equals: usernameOrEmail,
+              mode: 'insensitive',
+            },
           },
         ],
       },
     });
 
     return user;
+  }
+
+  async findById(userId: number) {
+    return this.find({ id: userId });
   }
 
   async find(user: Prisma.UserWhereUniqueInput) {
@@ -151,7 +161,7 @@ export class UserService {
     updateUserDto: UpdateUserDto,
   ) {
     await this.check(user);
-    let hashedPassword, hashedEmso;
+    let hashedPassword;
     if (updateUserDto.password) {
       const salt = await bcrypt.genSalt();
       hashedPassword = await bcrypt.hash(updateUserDto.password, salt);
