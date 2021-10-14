@@ -15,6 +15,63 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Shop {
+  id: Int!
+  uuid: String!
+  name: String!
+  logo: PublicFile
+  public: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Discount {
+  id: Int!
+  uuid: String!
+  name: String!
+  description: String!
+  discountType: DiscountType!
+  thumbnail: PublicFile!
+  image: PublicFile!
+  categoryUuid: String!
+  shop: Shop!
+  couponType: CouponType!
+  maxPerUser: Int
+  max: Int
+  parts: Int!
+  public: Boolean!
+  ageLimit: Boolean!
+  validFrom: DateTime
+  validTo: DateTime
+  validTime: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime
+}
+
+enum DiscountType {
+  GENERATE
+  CLAIM
+}
+
+enum CouponType {
+  BARCODE
+  CODE
+  URL
+}
+
+type Coupon {
+  id: Int!
+  code: String!
+  public: Boolean!
+  used: Boolean!
+  validTo: DateTime!
+  discount: Discount!
+  discountUuid: String!
+  user: User
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type Profile {
   id: Int!
   firstName: String!
@@ -37,6 +94,7 @@ type User {
   ageConfirmed: Boolean!
   birthDate: DateTime!
   emso: String!
+  coupons: [Coupon!]!
   score: Int!
   createdAt: DateTime!
   updatedAt: DateTime
@@ -46,56 +104,6 @@ enum Role {
   USER
   EDITOR
   ADMIN
-}
-
-type Shop {
-  id: Int!
-  uuid: String!
-  name: String!
-  logo: PublicFile
-  public: Boolean!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type Discount {
-  id: Int!
-  uuid: String!
-  name: String!
-  description: String!
-  thumbnail: PublicFile!
-  image: PublicFile!
-  categoryUuid: String!
-  shop: Shop!
-  couponType: CouponType!
-  maxPerUser: Int
-  max: Int
-  parts: Int!
-  public: Boolean!
-  ageLimit: Boolean!
-  validFrom: DateTime
-  validTo: DateTime
-  validTime: Int!
-  createdAt: DateTime!
-  updatedAt: DateTime
-}
-
-enum CouponType {
-  CODE
-  URL
-}
-
-type Coupon {
-  id: Int!
-  code: String!
-  public: Boolean!
-  used: Boolean!
-  validTo: DateTime!
-  discount: Discount!
-  discountUuid: String!
-  user: User
-  createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
 type Post {

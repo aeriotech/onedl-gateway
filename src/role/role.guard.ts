@@ -9,7 +9,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { Role } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
-export const RoleGuard = (...roles: Role[]) => {
+export const RoleGuard = (...roles: Role[]): any => {
   @Injectable()
   class RoleGuardMixin implements CanActivate {
     constructor(private readonly prisma: PrismaService) {}

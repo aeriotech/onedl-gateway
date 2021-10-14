@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import * as dayjs from 'dayjs';
-import { Discount, Prisma } from '@prisma/client';
+import { Discount, DiscountType, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateDiscountDto } from './dto/create-discount.dto';
 import { FilesService } from 'src/files/files.service';
@@ -15,6 +15,8 @@ import { UpdateDiscountDto } from './dto/update-discount.dto';
 import { ShopService } from 'src/shop/shop.service';
 import { CouponService } from 'src/coupon/coupon.service';
 import { CouponState } from './models/coupon-state.model';
+import { User } from 'src/user/models/user.model';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class DiscountService {
@@ -23,6 +25,7 @@ export class DiscountService {
     private readonly filesService: FilesService,
     private readonly shopService: ShopService,
     private readonly couponService: CouponService,
+    private readonly userService: UserService,
   ) {}
 
   private readonly logger = new Logger(DiscountService.name);
@@ -36,8 +39,16 @@ export class DiscountService {
     }
   }
 
-  async getDiscount(where: Prisma.DiscountWhereUniqueInput) {
-    await this.checkDiscount(where);
+  async findById(id: number) {
+    return this.findOne({ id });
+  }
+
+  async findByUuid(uuid: string) {
+    return this.findOne({ uuid });
+  }
+
+  async findOne(where: Prisma.DiscountWhereUniqueInput) {
+    await this.exists(where);
     return this.prisma.discount.findUnique({
       where,
       include: {
@@ -173,7 +184,7 @@ export class DiscountService {
     return discounts;
   }
 
-  async getPublicDiscount(uuid: string) {
+  async getPublic(uuid: string) {
     const now = dayjs().toISOString();
     const discount = await this.prisma.discount.findFirst({
       where: {
@@ -251,12 +262,24 @@ export class DiscountService {
     return await this.prisma.discount.update({ where: { id }, data });
   }
 
-  async generateCoupon(userId: number, discountUuid: string) {
-    return this.couponService.linkCoupon(userId, discountUuid);
+  async claimCouponPublic(userId: number, discountUuid: string) {
+    const { id } = await this.getPublic(discountUuid);
+    await this.claimCoupon(userId, id);
   }
 
-  private async checkDiscount(where: Prisma.DiscountWhereUniqueInput) {
-    const discount = await this.prisma.discount.findUnique({ where });
+  async claimCoupon(userId: number, discountId: number) {
+    const discount = await this.findById(discountId);
+    switch (discount.discountType) {
+      case DiscountType.GENERATE:
+        return this.couponService.generateCoupon(userId, discount);
+
+      case DiscountType.CLAIM:
+        return this.couponService.linkCoupon(userId, discount);
+    }
+  }
+
+  async exists(where: Prisma.DiscountWhereUniqueInput) {
+    const discount = await this.prisma.discount.findFirst({ where });
     if (!discount) {
       throw new NotFoundException('Discount not found');
     }

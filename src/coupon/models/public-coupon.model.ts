@@ -15,6 +15,7 @@ export class PublicCoupon implements Coupon {
   public: boolean;
   @Expose()
   validTo: Date;
+  @Expose()
   discount: PublicDiscount;
   @Expose()
   createdAt: Date;

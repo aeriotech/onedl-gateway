@@ -21,13 +21,13 @@ export class Coupon implements PrismaCoupon {
   validTo: Date;
 
   @Field((type) => Discount)
-  discount: Discount;
+  discount?: Discount;
 
   @Field()
   discountUuid: string;
 
   @Field((type) => User, { nullable: true })
-  user: User;
+  user?: User;
   userId: number;
 
   @Field()

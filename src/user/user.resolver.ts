@@ -47,6 +47,16 @@ export class UserResolver {
       .profile();
   }
 
+  @ResolveField()
+  async coupons(@Root() user: User) {
+    return this.prisma.user
+      .findUnique({
+        where: { id: user.id },
+        include: { coupons: true },
+      })
+      .coupons();
+  }
+
   @UseGuards(RoleGuard(Role.ADMIN))
   @Query((returns) => [User], { nullable: true })
   async users() {

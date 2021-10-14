@@ -1,5 +1,6 @@
 import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { Plan, Role, User as PrismaUser } from '@prisma/client';
+import { Coupon } from 'src/coupon/models/coupon.model';
 import { Profile } from 'src/profile/models/profile.model';
 
 registerEnumType(Role, { name: 'Role' });
@@ -39,6 +40,9 @@ export class User implements PrismaUser {
 
   @Field()
   emso: string;
+
+  @Field((type) => [Coupon])
+  coupons: Coupon[];
 
   @Field((type) => Int)
   score: number;

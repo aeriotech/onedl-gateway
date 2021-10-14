@@ -12,9 +12,13 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { PublicShop } from 'src/shop/models/public.shop.model';
 import { ShopService } from 'src/shop/shop.service';
 import { UserService } from 'src/user/user.service';
-import { DailyAvailable } from './models/daily.available.model';
+import { DailyAvailableAt } from './models/daily-available.model';
 import { DailySelect } from './models/daily-select.model';
-import { DailyShops } from './models/daily.shops.model';
+import { DailyShops } from './models/daily-shops.model';
+import { Coupon } from 'src/coupon/models/coupon.model';
+import { DailyAvailable } from './dto/daily-available.dto';
+import { DailyDiscountMap } from './models/daily-discount.model';
+import { url } from 'inspector';
 
 @Injectable()
 export class DailyService {
@@ -31,7 +35,211 @@ export class DailyService {
   private readonly selectAmount = 1;
   private readonly displayAmount = 4;
 
-  async checkAvailability(userId: number): Promise<DailyAvailable> {
+  async getAll() {
+    return this.prisma.daily.findMany();
+  }
+
+  async isAvailable(
+    userId: number,
+    dailyUuid: string,
+  ): Promise<DailyAvailable> {
+    const claimed = await this.checkAlreadyClaimed(userId, dailyUuid);
+    return {
+      available: !claimed,
+    };
+  }
+
+  async getCategories(dailyUuid: string) {
+    const daily = await this.prisma.daily.findFirst({
+      where: { uuid: dailyUuid },
+      include: {
+        dailyDiscountMap: {
+          include: {
+            discount: {
+              include: {
+                category: {
+                  include: {
+                    background: {
+                      select: {
+                        url: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!daily) {
+      throw new NotFoundException('Daily not found');
+    }
+
+    // Map discounts to categories
+    const mappedCategories = daily.dailyDiscountMap.map(
+      (d) => d.discount.category,
+    );
+
+    const categories = mappedCategories.filter(
+      (d, i) => mappedCategories.indexOf(d) === i,
+    );
+
+    return categories;
+  }
+
+  async claimDailyDiscount(userId: number, dailyUuid: string) {
+    const alreadyClaimed = await this.checkAlreadyClaimed(userId, dailyUuid);
+    if (alreadyClaimed) {
+      throw new ForbiddenException('Not available');
+    }
+
+    const dailyDiscount = await this.getRandomDailyDiscount(dailyUuid);
+
+    // Adds coupon to the user
+    await this.discountService.claimCoupon(userId, dailyDiscount.discountId);
+
+    // Adds user to the daily count
+    await this.addUserCount(userId, dailyUuid);
+
+    return dailyDiscount;
+  }
+
+  private async getRandomDailyDiscount(dailyUuid: string) {
+    // Find the daily discount
+    const daily = await this.prisma.daily.findUnique({
+      where: {
+        uuid: dailyUuid,
+      },
+      include: {
+        dailyDiscountMap: {
+          include: {
+            image: {
+              select: {
+                url: true,
+              },
+            },
+          },
+        },
+        dailyCount: true,
+      },
+    });
+
+    if (!daily) {
+      throw new NotFoundException('Daily not found');
+    }
+
+    // Find today's user count
+    const dailyCount = await this.prisma.dailyDiscountCount.findFirst({
+      where: {
+        dailyId: daily.id,
+        createdAt: {
+          gte: dayjs().startOf('day').toDate(),
+          lt: dayjs().endOf('day').toDate(),
+        },
+      },
+      include: {
+        users: true,
+      },
+    });
+
+    // Filter discounts
+    const discounts = daily.dailyDiscountMap.filter(
+      (discount) =>
+        (!discount.availableFrom || dayjs().isAfter(discount.availableFrom)) &&
+        (!discount.availableTo || dayjs().isBefore(discount.availableTo)),
+    );
+
+    // Check if there is an discount override available
+    const override = discounts.find(
+      (discount) => discount.countTrigger === dailyCount?.users?.length + 1,
+    );
+
+    // Return the override
+    if (override) {
+      return override;
+    }
+
+    // Calculate sum of all discount probabilities
+    const sum = discounts.reduce((acc, cur) => acc + cur.probability, 0);
+
+    // Get random number between 0 and sum
+    const random = Math.random() * sum;
+
+    // Get random discount
+    let currentSum = 0;
+    for (const discount of discounts) {
+      currentSum += discount.probability ?? 0;
+      if (random < currentSum) {
+        return discount;
+      }
+    }
+
+    throw new BadRequestException('No discounts found');
+  }
+
+  async checkAlreadyClaimed(userId: number, dailyUuid: string) {
+    const userCount = await this.prisma.dailyDiscountCount.count({
+      where: {
+        createdAt: {
+          gte: dayjs().startOf('day').toDate(),
+          lt: dayjs().endOf('day').toDate(),
+        },
+        daily: {
+          uuid: dailyUuid,
+        },
+        users: {
+          some: {
+            id: userId,
+          },
+        },
+      },
+    });
+
+    return !!userCount;
+  }
+
+  async addUserCount(userId: number, dailyUuid: string) {
+    const daily = await this.prisma.daily.findFirst({
+      where: { uuid: dailyUuid },
+    });
+
+    let dailyCount = await this.prisma.dailyDiscountCount.findFirst({
+      where: {
+        daily: {
+          uuid: dailyUuid,
+        },
+        createdAt: {
+          gte: dayjs().startOf('day').toDate(),
+          lt: dayjs().endOf('day').toDate(),
+        },
+      },
+    });
+
+    if (!dailyCount) {
+      dailyCount = await this.prisma.dailyDiscountCount.create({
+        data: {
+          dailyId: daily.id,
+        },
+      });
+    }
+
+    await this.prisma.dailyDiscountCount.update({
+      where: { id: dailyCount.id },
+      data: {
+        users: {
+          connect: {
+            id: userId,
+          },
+        },
+      },
+    });
+  }
+
+  // Legacy Code //
+
+  async checkAvailability(userId: number): Promise<DailyAvailableAt> {
     const user = await this.userService.find({ id: userId });
 
     const lastDaily = dayjs(user.lastDaily);
@@ -182,9 +390,10 @@ export class DailyService {
       shopId: selectedShopId,
     });
 
-    const coupon = await this.couponService.generateCoupon(userId, {
-      id: randomDiscount.id,
-    });
+    const coupon = await this.couponService.generateCoupon(
+      userId,
+      randomDiscount,
+    );
 
     const publicCoupon = await this.couponService.getPublicCoupon({
       id: coupon.id,

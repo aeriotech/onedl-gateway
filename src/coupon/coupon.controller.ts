@@ -10,7 +10,6 @@ import {
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 import { ApplyUser } from 'src/auth/apply-user.guard';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Public } from 'src/auth/public.decorator';
 import { RoleGuard } from 'src/role/role.guard';
 import { UserId } from 'src/user/user.decorator';
@@ -34,17 +33,23 @@ export class CouponController {
     return this.couponService.getPublicCoupons(userId);
   }
 
+  @Get(':discountUuid')
+  @ApiBearerAuth('User')
+  @ApiBearerAuth('Admin')
+  @UseInterceptors(PublicFilter(PublicCoupon))
+  @UseGuards(ApplyUser)
+  @Public()
+  getDiscountCoupons(
+    @UserId() userId: number,
+    @Param('discountUuid') discountUuid: string,
+  ) {
+    return this.couponService.getPublicCoupons(userId, discountUuid);
+  }
+
   @ApiBearerAuth('Admin')
   @UseGuards(RoleGuard(Role.ADMIN))
   @Post('bulk')
   async bulkAddCoupons(@Body() body: BulkCreateCouponDto) {
     return this.couponService.bulkAddCoupons(body);
-  }
-
-  @ApiBearerAuth('Admin')
-  @Get(':username')
-  @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
-  async getUserCoupon(@Param('username') username: string) {
-    return this.couponService.getCoupons({ username });
   }
 }

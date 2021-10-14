@@ -7,7 +7,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { Coupon, Prisma } from '@prisma/client';
+import { Discount, Prisma } from '@prisma/client';
 import * as dayjs from 'dayjs';
 import { DiscountService } from 'src/discount/discount.service';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -15,6 +15,7 @@ import { UserService } from 'src/user/user.service';
 import { BulkCreateCouponDto } from './dtos/bulk-create-coupon.dto';
 import { AgeLimitException } from './exceptions/age-limit.exception';
 import { CouponLimitException } from './exceptions/coupon-limit.exception';
+import { Coupon } from './models/coupon.model';
 import { Coupons } from './models/coupons.model';
 import { PublicCoupon } from './models/public-coupon.model';
 
@@ -35,6 +36,17 @@ export class CouponService {
       where: {
         user,
       },
+      include: {
+        discount: {
+          select: {
+            thumbnail: {
+              select: {
+                url: true,
+              },
+            },
+          },
+        },
+      },
     })) as unknown as Array<PublicCoupon>;
 
     return {
@@ -42,7 +54,8 @@ export class CouponService {
     };
   }
 
-  async getPublicCoupons(userId?: number) {
+  async getPublicCoupons(userId?: number, discountUuid?: string) {
+    await this.discountService.exists({ uuid: discountUuid });
     const coupons = await this.prisma.coupon.findMany({
       where: {
         OR: [
@@ -53,6 +66,7 @@ export class CouponService {
             public: true,
           },
         ],
+        discountUuid,
       },
     });
     return coupons;
@@ -66,16 +80,14 @@ export class CouponService {
     }) as unknown as Promise<PublicCoupon>;
   }
 
-  async linkCoupon(userId: number, discountUuid: string) {
-    const user = await this.userService.find({ id: userId });
+  async linkCoupon(userId: number, discount: Discount) {
+    const user = await this.userService.findById(userId);
 
-    const discount = await this.discountService.getDiscount({
-      uuid: discountUuid,
-    });
+    const { uuid } = discount;
 
     if (discount.ageLimit && !user.ageConfirmed) {
       this.logger.verbose(
-        `${user.username} tried to link a coupon (${discountUuid}), but didn't have age confirmed`,
+        `${user.username} tried to link a coupon (${uuid}), but didn't have age confirmed`,
       );
       throw new AgeLimitException();
     }
@@ -86,7 +98,7 @@ export class CouponService {
 
     if (currentCoupons.length >= discount.maxPerUser) {
       this.logger.verbose(
-        `${user.username} tried to link a coupon (${discountUuid}), but the limit was reached`,
+        `${user.username} tried to link a coupon (${uuid}), but the limit was reached`,
       );
       throw new CouponLimitException();
     }
@@ -99,13 +111,16 @@ export class CouponService {
           discountUuid: discount.uuid,
         },
       });
-      this.logger.verbose(`${user.username} linked a coupon (${discountUuid})`);
+      this.logger.verbose(`${user.username} linked a coupon (${uuid})`);
 
       const updated = await this.prisma.coupon.update({
         where: { id: coupon.id },
         data: {
-          userId,
+          userId: user.id,
           used: true,
+        },
+        include: {
+          discount: true,
         },
       });
       return updated;
@@ -114,11 +129,7 @@ export class CouponService {
     }
   }
 
-  async generateCoupon(
-    userId: number,
-    where: Prisma.DiscountWhereUniqueInput,
-  ): Promise<Coupon> {
-    const discount = await this.discountService.getDiscount(where);
+  async generateCoupon(userId: number, discount: Discount): Promise<Coupon> {
     const validTo = discount.validTime
       ? dayjs().add(discount.validTime, 'hour').toISOString()
       : null;
@@ -126,7 +137,7 @@ export class CouponService {
       data: {
         validTo,
         discountUuid: discount.uuid,
-        userId: userId,
+        userId,
         code: 'COUPON_CODE_NOT_DEFINED',
       },
     });
@@ -135,7 +146,7 @@ export class CouponService {
 
   async bulkAddCoupons(bulkCreateCouponDto: BulkCreateCouponDto) {
     const { codes, discountUuid } = bulkCreateCouponDto;
-    const { validTo, validTime } = await this.discountService.getDiscount({
+    const { validTo, validTime } = await this.discountService.findOne({
       uuid: discountUuid,
     });
 
