@@ -28,6 +28,9 @@ export class User implements PrismaUser {
   @Field((type) => Profile)
   profile: Profile;
 
+  @Field((type) => [Coupon])
+  coupons: Coupon[];
+
   @Field()
   emailConfirmed: boolean;
   emailConfirmationSentAt: Date;
