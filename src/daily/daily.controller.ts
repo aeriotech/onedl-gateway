@@ -24,18 +24,25 @@ export class DailyController {
   @UseInterceptors(PublicFilter(PublicDaily))
   @Get()
   async getDailyList() {
-    return this.dailyService.getAll();
+    return this.dailyService.getAllPublic();
+  }
+
+  @ApiBearerAuth('User')
+  @UseInterceptors(PublicFilter(PublicDaily))
+  @Get('/:uuid')
+  async getDaily(@Param('uuid') dailyUuid: string) {
+    return this.dailyService.getPublic(dailyUuid);
   }
 
   @ApiBearerAuth('User')
   @UseInterceptors(PublicFilter(PublicCategory))
-  @Get('/categories/:uuid')
-  async getDaily(@Param('uuid') dailyUuid: string) {
+  @Get('/:uuid/categories')
+  async getDailyCategories(@Param('uuid') dailyUuid: string) {
     return this.dailyService.getCategories(dailyUuid);
   }
 
   @ApiBearerAuth('User')
-  @Get('/available/:uuid')
+  @Get('/:uuid/available')
   async getAvailable(
     @UserId() userId: number,
     @Param('uuid') dailyUuid: string,

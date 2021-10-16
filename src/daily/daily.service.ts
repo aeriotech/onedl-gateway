@@ -15,10 +15,9 @@ import { UserService } from 'src/user/user.service';
 import { DailyAvailableAt } from './models/daily-available.model';
 import { DailySelect } from './models/daily-select.model';
 import { DailyShops } from './models/daily-shops.model';
-import { Coupon } from 'src/coupon/models/coupon.model';
 import { DailyAvailable } from './dto/daily-available.dto';
-import { DailyDiscountMap } from './models/daily-discount.model';
-import { url } from 'inspector';
+import { plainToClass } from 'class-transformer';
+import { PublicDiscount } from 'src/discount/models/public-discount.model';
 
 @Injectable()
 export class DailyService {
@@ -35,8 +34,32 @@ export class DailyService {
   private readonly selectAmount = 1;
   private readonly displayAmount = 4;
 
-  async getAll() {
-    return this.prisma.daily.findMany();
+  async getAllPublic() {
+    return this.prisma.daily.findMany({
+      where: {
+        public: true,
+        availableFrom: {
+          lte: new Date(),
+        },
+        availableTo: {
+          gt: new Date(),
+        },
+      },
+    });
+  }
+
+  async getPublic(dailyUuid) {
+    return this.prisma.daily.findFirst({
+      where: {
+        uuid: dailyUuid,
+        availableFrom: {
+          lte: new Date(),
+        },
+        availableTo: {
+          gt: new Date(),
+        },
+      },
+    });
   }
 
   async isAvailable(
@@ -103,7 +126,9 @@ export class DailyService {
     // Adds user to the daily count
     await this.addUserCount(userId, dailyUuid);
 
-    return dailyDiscount;
+    const publicDiscount = plainToClass(PublicDiscount, dailyDiscount.discount);
+
+    return { ...dailyDiscount, discount: publicDiscount };
   }
 
   private async getRandomDailyDiscount(dailyUuid: string) {
@@ -118,6 +143,20 @@ export class DailyService {
             image: {
               select: {
                 url: true,
+              },
+            },
+            discount: {
+              include: {
+                image: {
+                  select: {
+                    url: true,
+                  },
+                },
+                thumbnail: {
+                  select: {
+                    url: true,
+                  },
+                },
               },
             },
           },

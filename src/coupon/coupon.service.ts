@@ -8,8 +8,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Discount, Prisma } from '@prisma/client';
+import { plainToClass, plainToClassFromExist } from 'class-transformer';
 import * as dayjs from 'dayjs';
 import { DiscountService } from 'src/discount/discount.service';
+import { PublicDiscount } from 'src/discount/models/public-discount.model';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { BulkCreateCouponDto } from './dtos/bulk-create-coupon.dto';
@@ -68,7 +70,26 @@ export class CouponService {
         ],
         discountUuid,
       },
+      include: {
+        discount: {
+          include: {
+            image: {
+              select: {
+                url: true,
+              },
+            },
+            thumbnail: {
+              select: {
+                url: true,
+              },
+            },
+          },
+        },
+      },
     });
+    coupons.forEach(
+      (c) => (c.discount = plainToClass(PublicDiscount, c.discount)),
+    );
     return coupons;
   }
 

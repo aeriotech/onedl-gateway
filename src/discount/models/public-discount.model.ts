@@ -1,5 +1,6 @@
-import { CouponType, Discount, DiscountType, PublicFile } from '.prisma/client';
+import { CouponType, Discount, DiscountType } from '.prisma/client';
 import { Expose } from 'class-transformer';
+import { PublicFile } from 'src/files/models/public-file.model';
 import { PublicShop } from 'src/shop/models/public.shop.model';
 
 export class PublicDiscount implements Discount {
@@ -19,9 +20,11 @@ export class PublicDiscount implements Discount {
   ageLimit: boolean;
   parts: number;
   public: boolean;
+  claimable: boolean;
   validFrom: Date;
   validTo: Date;
   validTime: number;
+  @Expose()
   categoryUuid: string;
   thumbnailId: number;
   @Expose()

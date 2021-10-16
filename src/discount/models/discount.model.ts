@@ -58,6 +58,9 @@ export class Discount implements PrismaDiscount {
   public: boolean;
 
   @Field()
+  claimable: boolean;
+
+  @Field()
   ageLimit: boolean;
 
   @Field({ nullable: true })

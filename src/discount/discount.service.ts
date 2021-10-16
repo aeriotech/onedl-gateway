@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   Logger,
   NotFoundException,
@@ -15,7 +16,6 @@ import { UpdateDiscountDto } from './dto/update-discount.dto';
 import { ShopService } from 'src/shop/shop.service';
 import { CouponService } from 'src/coupon/coupon.service';
 import { CouponState } from './models/coupon-state.model';
-import { User } from 'src/user/models/user.model';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
@@ -189,7 +189,7 @@ export class DiscountService {
     const discount = await this.prisma.discount.findFirst({
       where: {
         uuid,
-        public: true,
+        // public: true,
         AND: [
           {
             OR: [
@@ -263,7 +263,10 @@ export class DiscountService {
   }
 
   async claimCouponPublic(userId: number, discountUuid: string) {
-    const { id } = await this.getPublic(discountUuid);
+    const { id, claimable } = await this.getPublic(discountUuid);
+    if (!claimable) {
+      throw new ForbiddenException("You can't claim this coupon");
+    }
     await this.claimCoupon(userId, id);
   }
 
