@@ -8,27 +8,28 @@ generator client {
 }
 
 model User {
-  id                      Int           @id @default(autoincrement())
-  role                    Role          @default(USER)
-  username                String        @unique
-  email                   String        @unique
+  id                      Int                  @id @default(autoincrement())
+  role                    Role                 @default(USER)
+  username                String               @unique
+  email                   String               @unique
   password                String
   forgotPasswordToken     String?
-  plan                    Plan          @default(NORMAL)
-  profile                 Profile?      @relation(fields: [profileId], references: [id])
-  profileId               Int?
-  emailConfirmed          Boolean       @default(false)
+  plan                    Plan                 @default(NORMAL)
+  profile                 Profile?             @relation(fields: [profileId], references: [id])
+  profileId               Int?                 @unique
+  emailConfirmed          Boolean              @default(false)
   emailConfirmationSentAt DateTime?
-  ageConfirmed            Boolean       @default(false)
+  ageConfirmed            Boolean              @default(false)
   birthDate               DateTime?
-  emso                    String?       @unique
-  score                   Int           @default(0)
-  lastDaily               DateTime      @default(now())
+  emso                    String?              @unique
+  score                   Int                  @default(0)
+  lastDaily               DateTime             @default(now())
   coupons                 Coupon[]
   dailySessionUuid        String?
-  dailySession            DailySession? @relation
-  createdAt               DateTime      @default(now())
-  updatedAt               DateTime?     @updatedAt
+  dailySession            DailySession?        @relation
+  dailyDiscounts          DailyDiscountCount[]
+  createdAt               DateTime             @default(now())
+  updatedAt               DateTime?            @updatedAt
 }
 
 enum Role {
@@ -80,40 +81,53 @@ model Category {
   uuid      String     @unique
   name      String
   discounts Discount[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime?  @updatedAt
+
+  background   PublicFile? @relation(fields: [backgroundId], references: [id])
+  backgroundId Int?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
 }
 
 enum CouponType {
+  BARCODE
   CODE
   URL
 }
 
+enum DiscountType {
+  GENERATE
+  CLAIM
+}
+
 model Discount {
-  id           Int         @id @unique @default(autoincrement())
-  uuid         String      @unique @default("")
-  name         String
-  description  String      @default("")
-  thumbnail    PublicFile? @relation("thumbnail", fields: [thumbnailId], references: [id])
-  thumbnailId  Int?
-  image        PublicFile? @relation("image", fields: [imageId], references: [id])
-  imageId      Int?
-  category     Category?   @relation(fields: [categoryUuid], references: [uuid])
-  categoryUuid String?
-  shop         Shop        @relation(fields: [shopId], references: [id])
-  shopId       Int
-  coupons      Coupon[]
-  couponType   CouponType  @default(CODE)
-  maxPerUser   Int?        @default(1)
-  max          Int?
-  parts        Int         @default(1)
-  public       Boolean     @default(false)
-  ageLimit     Boolean     @default(false)
-  validFrom    DateTime?
-  validTo      DateTime?
-  validTime    Int?
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime?   @updatedAt
+  id               Int                @id @unique @default(autoincrement())
+  uuid             String             @unique @default("")
+  name             String
+  description      String             @default("")
+  thumbnail        PublicFile?        @relation("thumbnail", fields: [thumbnailId], references: [id])
+  thumbnailId      Int?
+  image            PublicFile?        @relation("image", fields: [imageId], references: [id])
+  imageId          Int?
+  category         Category?          @relation(fields: [categoryUuid], references: [uuid])
+  categoryUuid     String?
+  shop             Shop               @relation(fields: [shopId], references: [id])
+  shopId           Int
+  coupons          Coupon[]
+  couponType       CouponType         @default(CODE)
+  discountType     DiscountType       @default(CLAIM)
+  maxPerUser       Int?               @default(1)
+  max              Int?
+  parts            Int                @default(1)
+  public           Boolean            @default(false)
+  claimable        Boolean            @default(false)
+  ageLimit         Boolean            @default(false)
+  validFrom        DateTime?
+  validTo          DateTime?
+  validTime        Int?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime?          @updatedAt
+  DailyDiscountMap DailyDiscountMap[]
 }
 
 model Coupon {
@@ -131,17 +145,20 @@ model Coupon {
 }
 
 model PublicFile {
-  id                Int          @id @default(autoincrement())
+  id                Int                @id @default(autoincrement())
   url               String
-  key               String       @unique
+  key               String             @unique
   profile           Profile[]
   shop              Shop[]
-  Post              Post[]
-  discountImage     Discount[]   @relation("image")
-  discountThumbnail Discount[]   @relation("thumbnail")
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime?    @updatedAt
+  post              Post[]
+  discountImage     Discount[]         @relation("image")
+  discountThumbnail Discount[]         @relation("thumbnail")
   comingSoon        ComingSoon[]
+  category          Category[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime?          @updatedAt
+  DailyDiscountMap  DailyDiscountMap[]
+  Daily             Daily[]
 }
 
 model PrivateFile {
@@ -182,6 +199,62 @@ model ComingSoon {
   image   PublicFile? @relation(fields: [imageId], references: [id])
   imageId Int?
   public  Boolean     @default(false)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+}
+
+model Daily {
+  id   Int    @id @default(autoincrement())
+  uuid String @unique
+
+  name String
+
+  public        Boolean   @default(false)
+  availableFrom DateTime?
+  availableTo   DateTime?
+
+  background   PublicFile? @relation(fields: [backgroundId], references: [id])
+  backgroundId Int?
+
+  dailyDiscountMap DailyDiscountMap[]
+  dailyCount       DailyDiscountCount[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+}
+
+model DailyDiscountMap {
+  id Int @id @default(autoincrement())
+
+  daily   Daily? @relation(fields: [dailyId], references: [id])
+  dailyId Int?
+
+  probability  Int?
+  countTrigger Int?
+
+  discount   Discount @relation(fields: [discountId], references: [id])
+  discountId Int
+
+  image   PublicFile? @relation(fields: [imageId], references: [id])
+  imageId Int?
+
+  title       String?
+  description String?
+
+  availableFrom DateTime?
+  availableTo   DateTime?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+}
+
+model DailyDiscountCount {
+  id Int @id @default(autoincrement())
+
+  daily   Daily? @relation(fields: [dailyId], references: [id])
+  dailyId Int?
+  users   User[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt

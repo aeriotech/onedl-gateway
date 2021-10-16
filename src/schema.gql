@@ -30,6 +30,7 @@ type Discount {
   uuid: String!
   name: String!
   description: String!
+  discountType: DiscountType!
   thumbnail: PublicFile!
   image: PublicFile!
   categoryUuid: String!
@@ -39,6 +40,7 @@ type Discount {
   max: Int
   parts: Int!
   public: Boolean!
+  claimable: Boolean!
   ageLimit: Boolean!
   validFrom: DateTime
   validTo: DateTime
@@ -47,7 +49,13 @@ type Discount {
   updatedAt: DateTime
 }
 
+enum DiscountType {
+  GENERATE
+  CLAIM
+}
+
 enum CouponType {
+  BARCODE
   CODE
   URL
 }
@@ -83,11 +91,11 @@ type User {
   email: String!
   plan: String!
   profile: Profile!
-  coupons: [Coupon!]!
   emailConfirmed: Boolean!
   ageConfirmed: Boolean!
   birthDate: DateTime!
   emso: String!
+  coupons: [Coupon!]!
   score: Int!
   createdAt: DateTime!
   updatedAt: DateTime
@@ -128,6 +136,8 @@ type Query {
   discounts: [Discount!]!
   discount(where: DiscountUniqueInput!): Discount
   files: [PublicFile!]
+  shops: [Shop!]!
+  shop(where: ShopUniqueInput!): Shop
   coupons: [Coupon!]!
   coupon(where: CouponUniqueInput!): Coupon!
   posts: [Post!]
@@ -143,12 +153,17 @@ input UserUniqueInput {
 }
 
 input ProfileUniqueInput {
-  id: Int!
+  id: Int
 }
 
 input DiscountUniqueInput {
   id: Int
   uuid: String
+}
+
+input ShopUniqueInput {
+  id: Int!
+  uuid: String!
 }
 
 input CouponUniqueInput {
@@ -166,6 +181,10 @@ input ComingSoonUniqueInput {
 type Mutation {
   updateUser(data: UpdateUserDto!, where: UserUniqueInput!): User!
   deleteUser(where: UserUniqueInput!): User!
+  updateProfile(data: UpdateProfileDto!, where: ProfileUniqueInput!): Profile!
+  createShop(data: CreateShopDto!): Shop!
+  updateShop(data: UpdateShopDto!, where: ShopUniqueInput!): Shop!
+  deleteShop(where: ShopUniqueInput!): Shop!
   createPost(data: CreatePostDto!): Post!
   updatePost(data: UpdatePostDto!, where: PostUniqueInput!): Post!
   deletePost(where: PostUniqueInput!): Post!
@@ -187,6 +206,23 @@ input UpdateUserDto {
   emso: String
   birthDate: DateTime
   forgotPasswordToken: String
+}
+
+input UpdateProfileDto {
+  firstName: String
+  lastName: String
+  bio: String
+}
+
+input CreateShopDto {
+  name: String!
+  uuid: String!
+}
+
+input UpdateShopDto {
+  name: String!
+  public: Boolean!
+  logoId: Int!
 }
 
 input CreatePostDto {

@@ -41,7 +41,7 @@ export class DiscountController {
   @Public()
   @UseInterceptors(PublicFilter(PublicDiscount))
   getPublicDiscount(@Param('uuid') uuid: string) {
-    return this.discountService.getPublicDiscount(uuid);
+    return this.discountService.getPublic(uuid);
   }
 
   @Get()
@@ -142,6 +142,6 @@ export class DiscountController {
     @UserId() userId: number,
     @Param('uuid') discountUuid: string,
   ) {
-    return this.discountService.generateCoupon(userId, discountUuid);
+    return this.discountService.claimCouponPublic(userId, discountUuid);
   }
 }

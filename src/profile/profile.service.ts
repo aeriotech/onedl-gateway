@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 import { FilesService } from 'src/files/files.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
-import { ProfileUpdateDto } from './dto/profile-update.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Injectable()
 export class ProfileService {
@@ -33,7 +33,7 @@ export class ProfileService {
     });
   }
 
-  async updatePublicProfile(id: number, profileUpdateDto: ProfileUpdateDto) {
+  async updatePublicProfile(id: number, profileUpdateDto: UpdateProfileDto) {
     const { profileId } = await this.userService.find({ id });
     return this.prisma.profile.update({
       where: { id: profileId },

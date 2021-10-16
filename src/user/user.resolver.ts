@@ -52,6 +52,7 @@ export class UserResolver {
     return this.prisma.user
       .findUnique({
         where: { id: user.id },
+        include: { coupons: true },
       })
       .coupons();
   }

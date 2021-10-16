@@ -27,6 +27,7 @@ import { ComingSoonModule } from './coming-soon/coming-soon.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TasksService } from './tasks/tasks.service';
 import { TasksModule } from './tasks/tasks.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -48,6 +49,9 @@ import { TasksModule } from './tasks/tasks.module';
     DiscordModule,
     AgeConfirmationModule,
     TasksModule,
+    PostModule,
+    ComingSoonModule,
+    TasksModule,
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
@@ -56,9 +60,10 @@ import { TasksModule } from './tasks/tasks.module';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       context: ({ req }) => ({ req }),
     }),
-    PostModule,
-    ComingSoonModule,
-    TasksModule,
+    ThrottlerModule.forRoot({
+      ttl: 60,
+      limit: 10,
+    }),
   ],
   providers: [
     StartupService,

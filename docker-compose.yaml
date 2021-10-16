@@ -10,21 +10,3 @@ services:
       POSTGRES_DB: fundl
     ports:
       - 5432:5432
-
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
-
-  validator:
-    image: ghcr.io/fundl/card-validator:latest
-    restart: always
-    environment:
-      S3_BUCKET: ${S3_BUCKET}
-      S3_REGION: ${S3_REGION}
-      S3_ACCESS_KEY: ${S3_ACCESS_KEY}
-      S3_SECRET_KEY: ${S3_SECRET_KEY}
-      S3_ENDPOINT: https://${S3_ENDPOINT}
-    ports:
-      - 5000:5000

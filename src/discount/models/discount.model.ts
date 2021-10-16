@@ -1,9 +1,14 @@
 import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
-import { CouponType, Discount as PrismaDiscount } from '@prisma/client';
+import {
+  CouponType,
+  Discount as PrismaDiscount,
+  DiscountType,
+} from '@prisma/client';
 import { PublicFile } from 'src/files/models/public-file.model';
 import { Shop } from 'src/shop/models/shop.model';
 
 registerEnumType(CouponType, { name: 'CouponType' });
+registerEnumType(DiscountType, { name: 'DiscountType' });
 
 @ObjectType()
 export class Discount implements PrismaDiscount {
@@ -18,6 +23,9 @@ export class Discount implements PrismaDiscount {
 
   @Field()
   description: string;
+
+  @Field((type) => DiscountType)
+  discountType: DiscountType;
 
   @Field((type) => PublicFile)
   thumbnail: PublicFile;
@@ -48,6 +56,9 @@ export class Discount implements PrismaDiscount {
 
   @Field()
   public: boolean;
+
+  @Field()
+  claimable: boolean;
 
   @Field()
   ageLimit: boolean;

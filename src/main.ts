@@ -22,6 +22,8 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
       skipUndefinedProperties: true,
+      enableDebugMessages: true,
+      disableErrorMessages: false,
     }),
   );
 

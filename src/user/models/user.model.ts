@@ -44,6 +44,9 @@ export class User implements PrismaUser {
   @Field()
   emso: string;
 
+  @Field((type) => [Coupon])
+  coupons: Coupon[];
+
   @Field((type) => Int)
   score: number;
   lastDaily: Date;

@@ -8,10 +8,17 @@ import { FilesModule } from 'src/files/files.module';
 import { ShopModule } from 'src/shop/shop.module';
 import { CouponModule } from 'src/coupon/coupon.module';
 import { DiscountResolver } from './discount.resolver';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
-  imports: [FilesModule, ShopModule, CouponModule],
-  providers: [DiscountService, PrismaService, ShopService, FilesService, DiscountResolver],
+  imports: [FilesModule, ShopModule, CouponModule, UserModule],
+  providers: [
+    DiscountService,
+    PrismaService,
+    ShopService,
+    FilesService,
+    DiscountResolver,
+  ],
   controllers: [DiscountController],
   exports: [DiscountService],
 })
