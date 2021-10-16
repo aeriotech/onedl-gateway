@@ -91,11 +91,11 @@ type User {
   email: String!
   plan: String!
   profile: Profile!
+  coupons: [Coupon!]!
   emailConfirmed: Boolean!
   ageConfirmed: Boolean!
   birthDate: DateTime!
   emso: String!
-  coupons: [Coupon!]!
   score: Int!
   createdAt: DateTime!
   updatedAt: DateTime
