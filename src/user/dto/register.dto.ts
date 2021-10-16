@@ -16,7 +16,7 @@ export class RegisterDto {
   email: string;
 
   @IsNotEmpty()
-  @Length(8, 64)
+  @Length(1, 64)
   password: string;
 
   @IsNotEmpty()
