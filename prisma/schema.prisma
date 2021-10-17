@@ -157,8 +157,9 @@ model PublicFile {
   category          Category[]
   createdAt         DateTime           @default(now())
   updatedAt         DateTime?          @updatedAt
-  DailyDiscountMap  DailyDiscountMap[]
-  Daily             Daily[]
+  dailyDiscountMap  DailyDiscountMap[]
+  dailyThumbnail    Daily[]            @relation("dailyThumbnail")
+  dailyBackground   Daily[]            @relation("dailyBackground")
 }
 
 model PrivateFile {
@@ -214,7 +215,10 @@ model Daily {
   availableFrom DateTime?
   availableTo   DateTime?
 
-  background   PublicFile? @relation(fields: [backgroundId], references: [id])
+  thumbnail   PublicFile? @relation("dailyThumbnail", fields: [thumbnailId], references: [id])
+  thumbnailId Int?
+
+  background   PublicFile? @relation("dailyBackground", fields: [backgroundId], references: [id])
   backgroundId Int?
 
   dailyDiscountMap DailyDiscountMap[]

@@ -38,11 +38,47 @@ export class DailyService {
     return this.prisma.daily.findMany({
       where: {
         public: true,
-        availableFrom: {
-          lte: new Date(),
+        AND: [
+          {
+            OR: [
+              {
+                availableFrom: {
+                  equals: null,
+                },
+              },
+              {
+                availableFrom: {
+                  lte: new Date(),
+                },
+              },
+            ],
+          },
+          {
+            OR: [
+              {
+                availableTo: {
+                  equals: null,
+                },
+              },
+              {
+                availableTo: {
+                  gt: new Date(),
+                },
+              },
+            ],
+          },
+        ],
+      },
+      include: {
+        background: {
+          select: {
+            url: true,
+          },
         },
-        availableTo: {
-          gt: new Date(),
+        thumbnail: {
+          select: {
+            url: true,
+          },
         },
       },
     });
