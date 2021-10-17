@@ -141,7 +141,10 @@ export class DailyService {
       (d) => d.discount.category,
     );
 
-    const categories = [...new Set(mappedCategories)];
+    const categories = mappedCategories.filter(
+      (c, index) =>
+        mappedCategories.findIndex((c2) => c2.uuid === c.uuid) === index,
+    );
 
     return categories;
   }
