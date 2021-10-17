@@ -228,7 +228,9 @@ export class DailyService {
 
     // Check if there is an discount override available
     const override = discounts.find(
-      (discount) => discount.countTrigger === dailyCount?.users?.length + 1,
+      (discount) =>
+        discount.countTrigger === dailyCount?.users?.length + 1 ||
+        (discount.countTrigger === 1 && !dailyCount),
     );
 
     // Return the override

@@ -13,6 +13,7 @@ import {
 import { getFromContainer, MetadataStorage } from 'class-validator';
 import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
 import { TasksService } from './tasks/tasks.service';
+import { json } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -26,6 +27,8 @@ async function bootstrap() {
       disableErrorMessages: false,
     }),
   );
+
+  app.use(json({ limit: '50mb' }));
 
   app.use(morgan('tiny'));
   app.enableCors();
