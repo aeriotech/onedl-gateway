@@ -141,9 +141,7 @@ export class DailyService {
       (d) => d.discount.category,
     );
 
-    const categories = mappedCategories.filter(
-      (d, i) => mappedCategories.indexOf(d) === i,
-    );
+    const categories = [...new Set(mappedCategories)];
 
     return categories;
   }
@@ -219,6 +217,20 @@ export class DailyService {
       },
     });
 
+    const allDailyCount = await this.prisma.dailyDiscountCount.findMany({
+      where: {
+        dailyId: daily.id,
+      },
+      include: {
+        users: true,
+      },
+    });
+
+    const allCount = allDailyCount.reduce(
+      (acc, cur) => acc + cur.users.length,
+      0,
+    );
+
     // Filter discounts
     const discounts = daily.dailyDiscountMap.filter(
       (discount) =>
@@ -228,9 +240,7 @@ export class DailyService {
 
     // Check if there is an discount override available
     const override = discounts.find(
-      (discount) =>
-        discount.countTrigger === dailyCount?.users?.length + 1 ||
-        (discount.countTrigger === 1 && !dailyCount),
+      (discount) => discount.countTrigger === allCount + 1,
     );
 
     // Return the override
