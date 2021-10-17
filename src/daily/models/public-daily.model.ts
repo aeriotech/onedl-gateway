@@ -16,6 +16,10 @@ export class PublicDaily implements Daily {
   background: PublicFile;
   backgroundId: number;
 
+  @Expose()
+  thumbnail: PublicFile;
+  thumbnailId: number;
+
   public: boolean;
 
   availableFrom: DateTime;
