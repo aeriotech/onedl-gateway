@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import handlePrismaError from 'src/utils/prisma-error-handler';
+import * as dayjs from 'dayjs';
 
 @Injectable()
 export class AgeConfirmationService {
@@ -22,6 +23,13 @@ export class AgeConfirmationService {
 
     const birthDate = this.extractDate(emso);
     const hashedEmso = this.hashEmso(emso).toString();
+
+    if (
+      dayjs().diff(birthDate, 'year') < 15 &&
+      dayjs().diff(birthDate, 'year') > 25
+    ) {
+      throw new BadRequestException('Invalid age');
+    }
 
     try {
       const user = await this.userService.update(
