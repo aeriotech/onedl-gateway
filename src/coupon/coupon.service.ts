@@ -117,7 +117,7 @@ export class CouponService {
       (coupon) => coupon.discountUuid === discount.uuid,
     );
 
-    if (currentCoupons.length >= discount.maxPerUser) {
+    if (discount.maxPerUser && currentCoupons.length >= discount.maxPerUser) {
       this.logger.verbose(
         `${user.username} tried to link a coupon (${uuid}), but the limit was reached`,
       );
