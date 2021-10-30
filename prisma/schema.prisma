@@ -77,10 +77,14 @@ model Shop {
 }
 
 model Category {
-  id        Int        @id @default(autoincrement())
-  uuid      String     @unique
-  name      String
-  discounts Discount[]
+  id   Int    @id @default(autoincrement())
+  uuid String @unique
+  name String
+
+  discountsMulti Discount[]
+  discounts      Discount[] @relation("categorySingle")
+
+  display Boolean @default(false)
 
   background   PublicFile? @relation(fields: [backgroundId], references: [id])
   backgroundId Int?
@@ -101,33 +105,46 @@ enum DiscountType {
 }
 
 model Discount {
-  id               Int                @id @unique @default(autoincrement())
-  uuid             String             @unique @default("")
-  name             String
-  description      String             @default("")
-  thumbnail        PublicFile?        @relation("thumbnail", fields: [thumbnailId], references: [id])
-  thumbnailId      Int?
-  image            PublicFile?        @relation("image", fields: [imageId], references: [id])
-  imageId          Int?
-  category         Category?          @relation(fields: [categoryUuid], references: [uuid])
-  categoryUuid     String?
-  shop             Shop               @relation(fields: [shopId], references: [id])
-  shopId           Int
-  coupons          Coupon[]
-  couponType       CouponType         @default(CODE)
-  discountType     DiscountType       @default(CLAIM)
-  maxPerUser       Int?               @default(1)
-  max              Int?
-  parts            Int                @default(1)
-  public           Boolean            @default(false)
-  claimable        Boolean            @default(false)
-  ageLimit         Boolean            @default(false)
-  validFrom        DateTime?
-  validTo          DateTime?
-  validTime        Int?
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime?          @updatedAt
-  DailyDiscountMap DailyDiscountMap[]
+  id          Int         @id @unique @default(autoincrement())
+  uuid        String      @unique @default("")
+  name        String
+  description String      @default("")
+  thumbnail   PublicFile? @relation("thumbnail", fields: [thumbnailId], references: [id])
+  thumbnailId Int?
+
+  image   PublicFile? @relation("image", fields: [imageId], references: [id])
+  imageId Int?
+
+  categories   Category[]
+  category     Category?  @relation("categorySingle", fields: [categoryUuid], references: [uuid])
+  categoryUuid String?
+
+  shop   Shop @relation(fields: [shopId], references: [id])
+  shopId Int
+
+  color String @default("#FFFFFF")
+
+  coupons    Coupon[]
+  couponType CouponType @default(CODE)
+
+  discountType DiscountType @default(CLAIM)
+  maxPerUser   Int?         @default(1)
+  max          Int?
+  parts        Int          @default(1)
+
+  dailyDiscountMap DailyDiscountMap[]
+
+  public Boolean @default(false)
+
+  claimable Boolean @default(false)
+  ageLimit  Boolean @default(false)
+
+  validFrom DateTime?
+  validTo   DateTime?
+  validTime Int?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
 }
 
 model Coupon {

@@ -28,6 +28,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TasksService } from './tasks/tasks.service';
 import { TasksModule } from './tasks/tasks.module';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
       ttl: 60,
       limit: 10,
     }),
+    CategoryModule,
   ],
   providers: [
     StartupService,

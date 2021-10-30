@@ -1,14 +1,6 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Post,
-  Query,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Controller, Get, Param, Post, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { PublicCategory } from 'src/category/models/public-category.model';
-import { PublicCoupon } from 'src/coupon/models/public-coupon.model';
 import { UserId } from 'src/user/user.decorator';
 import { PublicFilter } from 'src/utils/filter.interceptor';
 import { DailyService } from './daily.service';
