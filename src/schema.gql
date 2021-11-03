@@ -30,6 +30,7 @@ type Discount {
   uuid: String!
   name: String!
   description: String!
+  color: String!
   discountType: DiscountType!
   thumbnail: PublicFile!
   image: PublicFile!
@@ -182,6 +183,9 @@ type Mutation {
   updateUser(data: UpdateUserDto!, where: UserUniqueInput!): User!
   deleteUser(where: UserUniqueInput!): User!
   updateProfile(data: UpdateProfileDto!, where: ProfileUniqueInput!): Profile!
+  createDiscount(data: CreateDiscountDto!): Discount!
+  updateDiscount(data: UpdateDiscountDto!, where: DiscountUniqueInput!): Discount!
+  deleteDiscount(where: DiscountUniqueInput!): Discount!
   createShop(data: CreateShopDto!): Shop!
   updateShop(data: UpdateShopDto!, where: ShopUniqueInput!): Shop!
   deleteShop(where: ShopUniqueInput!): Shop!
@@ -212,6 +216,20 @@ input UpdateProfileDto {
   firstName: String
   lastName: String
   bio: String
+}
+
+input CreateDiscountDto {
+  name: String!
+  description: String!
+  shopId: Float!
+  max: Float
+  parts: Float
+}
+
+input UpdateDiscountDto {
+  name: String
+  description: String
+  public: Boolean
 }
 
 input CreateShopDto {

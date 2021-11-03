@@ -115,11 +115,11 @@ export class DiscountResolver {
   @Mutation((returns) => Discount)
   async deleteDiscount(
     @Args('where', { type: () => DiscountUniqueInput })
-    DiscountUniqueInput: DiscountUniqueInput,
+    discountUniqueInput: DiscountUniqueInput,
   ) {
     try {
       return this.prisma.discount.delete({
-        where: DiscountUniqueInput,
+        where: discountUniqueInput,
       });
     } catch (e) {
       handlePrismaError(e, 'Discount');
