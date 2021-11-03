@@ -79,7 +79,7 @@ export class DiscountResolver {
   }
 
   @UseGuards(RoleGuard(Role.ADMIN))
-  @Mutation()
+  @Mutation((returns) => Discount)
   async createDiscount(
     @Args('data', { type: () => CreateDiscountDto })
     createDiscountDto: CreateDiscountDto,
@@ -94,7 +94,7 @@ export class DiscountResolver {
   }
 
   @UseGuards(RoleGuard(Role.ADMIN))
-  @Mutation()
+  @Mutation((returns) => Discount)
   async updateDiscount(
     @Args('where', { type: () => DiscountUniqueInput })
     discountUniqueInput: DiscountUniqueInput,
@@ -112,7 +112,7 @@ export class DiscountResolver {
   }
 
   @UseGuards(RoleGuard(Role.ADMIN))
-  @Mutation()
+  @Mutation((returns) => Discount)
   async deleteDiscount(
     @Args('where', { type: () => DiscountUniqueInput })
     DiscountUniqueInput: DiscountUniqueInput,
