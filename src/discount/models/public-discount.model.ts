@@ -15,6 +15,8 @@ export class PublicDiscount implements Discount {
   couponType: CouponType;
   @Expose()
   discountType: DiscountType;
+  @Expose()
+  color: string;
   max: number;
   maxPerUser: number;
   ageLimit: boolean;

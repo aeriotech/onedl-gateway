@@ -24,6 +24,9 @@ export class Discount implements PrismaDiscount {
   @Field()
   description: string;
 
+  @Field()
+  color: string;
+
   @Field((type) => DiscountType)
   discountType: DiscountType;
 
