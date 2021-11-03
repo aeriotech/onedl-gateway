@@ -4,6 +4,7 @@ import {
   Field,
   InputType,
   Int,
+  Mutation,
   Query,
   ResolveField,
   Resolver,
@@ -13,6 +14,9 @@ import { Role } from '@prisma/client';
 import { IsIn, IsInt, IsString, IsUUID } from 'class-validator';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RoleGuard } from 'src/role/role.guard';
+import handlePrismaError from 'src/utils/prisma-error-handler';
+import { CreateDiscountDto } from './dto/create-discount.dto';
+import { UpdateDiscountDto } from './dto/update-discount.dto';
 import { Discount } from './models/discount.model';
 
 @InputType()
@@ -72,5 +76,53 @@ export class DiscountResolver {
     return this.prisma.discount.findUnique({
       where: discountUniqueInput,
     });
+  }
+
+  @UseGuards(RoleGuard(Role.ADMIN))
+  @Mutation()
+  async createDiscount(
+    @Args('data', { type: () => CreateDiscountDto })
+    createDiscountDto: CreateDiscountDto,
+  ) {
+    try {
+      return this.prisma.discount.create({
+        data: createDiscountDto,
+      });
+    } catch (e) {
+      handlePrismaError(e, 'Discount');
+    }
+  }
+
+  @UseGuards(RoleGuard(Role.ADMIN))
+  @Mutation()
+  async updateDiscount(
+    @Args('where', { type: () => DiscountUniqueInput })
+    discountUniqueInput: DiscountUniqueInput,
+    @Args('data', { type: () => UpdateDiscountDto })
+    updateDiscountDto: UpdateDiscountDto,
+  ) {
+    try {
+      return this.prisma.discount.update({
+        where: discountUniqueInput,
+        data: updateDiscountDto,
+      });
+    } catch (e) {
+      handlePrismaError(e, 'Discount');
+    }
+  }
+
+  @UseGuards(RoleGuard(Role.ADMIN))
+  @Mutation()
+  async deleteDiscount(
+    @Args('where', { type: () => DiscountUniqueInput })
+    DiscountUniqueInput: DiscountUniqueInput,
+  ) {
+    try {
+      return this.prisma.discount.delete({
+        where: DiscountUniqueInput,
+      });
+    } catch (e) {
+      handlePrismaError(e, 'Discount');
+    }
   }
 }
