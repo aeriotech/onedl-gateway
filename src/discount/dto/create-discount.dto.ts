@@ -14,16 +14,18 @@ export class CreateDiscountDto {
   description: string;
 
   @IsNotEmpty()
-  @Field()
+  @IsInt()
+  @Field((type) => Int)
   shopId: number;
 
   @IsNotEmpty()
   @Field((type) => Int, { nullable: true })
-  imageId: number;
+  imageId?: number;
 
   @IsNotEmpty()
-  @Field()
-  thumbnailId: number;
+  @IsInt()
+  @Field((type) => Int, { nullable: true })
+  thumbnailId?: number;
 
   @IsInt()
   @Min(1)
