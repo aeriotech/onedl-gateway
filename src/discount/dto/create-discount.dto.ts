@@ -1,4 +1,4 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsInt, IsNotEmpty, IsString, Min } from 'class-validator';
 
 @InputType()
@@ -17,13 +17,21 @@ export class CreateDiscountDto {
   @Field()
   shopId: number;
 
+  @IsNotEmpty()
+  @Field((type) => Int, { nullable: true })
+  imageId: number;
+
+  @IsNotEmpty()
+  @Field()
+  thumbnailId: number;
+
   @IsInt()
   @Min(1)
-  @Field({ nullable: true })
+  @Field((type) => Int, { nullable: true })
   max?: number;
 
   @IsInt()
   @Min(1)
-  @Field({ nullable: true })
+  @Field((type) => Int, { nullable: true })
   parts?: number;
 }
