@@ -222,13 +222,17 @@ input CreateDiscountDto {
   name: String!
   description: String!
   shopId: Float!
-  max: Float
-  parts: Float
+  imageId: Int
+  thumbnailId: Float!
+  max: Int
+  parts: Int
 }
 
 input UpdateDiscountDto {
   name: String
   description: String
+  imageId: Float
+  thumbnailId: Float
   public: Boolean
 }
 
