@@ -74,4 +74,4 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 Nest is [MIT licensed](LICENSE).
 
-<p style="font-size: 6px">Fundl is a trademark of Marijan Musek s.p.</p>
+<p style="font-size: 4px">Fundl is a trademark of <a href="http://www2.uil-sipo.si/dse.htm">Marijan Musek</a></p>
